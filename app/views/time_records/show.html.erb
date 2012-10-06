@@ -1,0 +1,74 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Date:</b>
+  <%= @time_record.date %>
+</p>
+
+<p>
+  <b>AM Start:</b>
+  <%= @time_record.am_start_str %>
+</p>
+
+<p>
+  <b>AM End:</b>
+  <%= @time_record.am_end_str %>
+</p>
+
+<p>
+  <b>PM Start:</b>
+  <%= @time_record.pm_start_str %>
+</p>
+
+<p>
+  <b>PM End:</b>
+  <%= @time_record.pm_end_str %>
+</p>
+
+<p>
+  <b>Regular Hours:</b>
+  <%= @time_record.regular_time %>
+</p>
+
+<p>
+  <b>Overtime Hours:</b>
+  <%= @time_record.overtime %>
+</p>
+
+<p>
+  <b>Regular Service Pay:</b>
+  <%= @time_record.regular_service_pay %>
+</p>
+
+<p>
+  <b>Overtime Pay:</b>
+  <%= @time_record.overtime_pay %>
+</p>
+
+<p>
+  <b>Allowance:</b>
+  <%= @time_record.allowance_pay %>
+</p>
+
+<p>
+  <b>Total Pay:</b>
+  <%= @time_record.total_pay %>
+</p>
+
+<p>
+  <b>Deductions:</b>
+  <%= @time_record.deductions %>
+</p>
+
+<p>
+  <b>Holiday Pay:</b>
+  <%= @time_record.holiday_pay %>
+</p>
+
+<p>
+  <b>Holiday Pay (Adjusted):</b>
+  <%= @time_record.adjusted_holiday_pay %>
+</p>
+
+<%= link_to 'Edit', edit_employee_time_record_path(@employee, @time_record) %> |
+<%= link_to 'Back', employee_path(@employee.id) %>

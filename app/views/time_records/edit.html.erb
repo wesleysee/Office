@@ -1,0 +1,6 @@
+<h1>Editing employee</h1>
+
+<%= render 'form', :form_url => employee_time_record_path %>
+
+<%= link_to 'Show', employee_time_record_path(@employee, @time_record) %> |
+<%= link_to 'Back', employee_path(@employee.id) %>

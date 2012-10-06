@@ -1,0 +1,84 @@
+<%= form_for(@time_record, :url => form_url, :html => {:id => 'form_time_record' }) do |f| %>
+    <% if @time_record.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@time_record.errors.count, "error") %> prohibited this Time Record from being saved:</h2>
+
+          <ul>
+            <% @time_record.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :date %><br />
+      <%= date_select :time_record, :date %>
+    </div>
+    <div class="field">
+      <%= f.label :salary, "Salary Rate" %><br />
+      <%= text_field :time_record, :salary %>
+    </div>
+    <div class="field">
+      <%= f.label :am_start, "AM Start" %><br />
+      <%= time_text_field :time_record, :am_start %>
+    </div>
+    <div class="field">
+      <%= f.label :am_end, "AM End" %><br />
+      <%= time_text_field :time_record, :am_end %>
+    </div>
+    <div class="field">
+      <%= f.label :pm_start, "PM Start" %><br />
+      <%= time_text_field :time_record, :pm_start %>
+    </div>
+    <div class="field">
+      <%= f.label :pm_end, "PM End" %><br />
+      <%= time_text_field :time_record, :pm_end %>
+    </div>
+    <div class="field">
+      <%= f.label :deductions %><br />
+      <%= f.text_field :deductions %>
+    </div>
+    <br/>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+<br/>
+<div>
+  Regular Hours: <span id="regular_time">Foo</span><br/>
+  Overtime: <span id="overtime">Foo</span><br/><br/>
+  Regular Service: <span id="regular_pay">Foo</span><br/>
+  OT: <span id="overtime_pay">Foo</span><br/>
+  Allowance: <span id="allowance_pay">Foo</span><br/>
+  Total Pay: <span id="total_pay">Foo</span><br/>
+
+</div>
+<br/>
+
+<script>
+    calculator_function = function() {
+        $.ajax({
+            url     : "calculator.js",
+            data    : $('#form_time_record').serialize(),
+            success : function(data) {
+                eval(data)
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        children = $("#time_record_am_start").children();
+        children.push.apply(children, $("#time_record_am_end").children());
+        children.push.apply(children, $("#time_record_pm_start").children());
+        children.push.apply(children, $("#time_record_pm_end").children());
+        children.push($("#time_record_salary"));
+        for (var i = 0; i < children.size(); i++) {
+            children[i].onkeyup = calculator_function;
+        }
+
+    });
+
+    calculator_function();
+</script>

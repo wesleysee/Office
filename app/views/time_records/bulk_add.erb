@@ -1,0 +1,103 @@
+<h1>Add Time Records</h1>
+
+<%= form_tag employees_bulk_create_time_records_path, :id => 'form_time_records' do %>
+
+    <% if @errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@errors_count, "error") %> prohibited these Time Records from being saved:</h2>
+
+          <ul>
+            <% @errors.each do |msg| %>
+                <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= date_select :time_record, :date, :default => {:year => Time.now.year, :month => Time.now.month, :day => (Time.now.day - 1 > 0 ? Time.now.day - 1 : Time.now.day)} %>
+    </div>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>AM Start</th>
+        <th>AM End</th>
+        <th>PM Start</th>
+        <th>PM End</th>
+        <th>Deductions</th>
+        <th>Reg Hours</th>
+        <th>Overtime</th>
+        <th>Reg Pay</th>
+        <th>OT Pay</th>
+        <th>Allowance</th>
+        <th>Total Pay</th>
+        <th>Enabled</th>
+      </tr>
+      <% for time_record in @time_records %>
+        <%= fields_for "time_records[]", time_record do |f| %>
+          <tr>
+            <td><%= time_record.employee.name %></td>
+            <td><%= f.time_text_field :am_start, :index => time_record.employee_id %></td>
+            <td><%= f.time_text_field :am_end, :index => time_record.employee_id %></td>
+            <td><%= f.time_text_field :pm_start, :index => time_record.employee_id %></td>
+            <td><%= f.time_text_field :pm_end, :index => time_record.employee_id %></td>
+            <td><%= f.text_field :deductions, :size => 10, :index => time_record.employee_id %></td>
+            <td><span id="regular_time_<%= time_record.employee_id %>" /></td>
+            <td><span id="overtime_<%= time_record.employee_id %>" /></td>
+            <td><span id="regular_pay_<%= time_record.employee_id %>" /></td>
+            <td><span id="overtime_pay_<%= time_record.employee_id %>" /></td>
+            <td><span id="allowance_pay_<%= time_record.employee_id %>" /></td>
+            <td><span id="total_pay_<%= time_record.employee_id %>" /></td>
+            <td><input id="checkbox_<%= time_record.employee_id %>" type="checkbox" checked="true"></td>
+          </tr>
+        <% end %>
+    <% end %>
+    </table>
+    <br/>
+    <div class="actions">
+    <%= submit_tag "Add Time Records" %>
+    </div>
+<% end %>
+
+<br />
+
+<%= link_to 'Back', employees_path %>
+
+<script>
+    calculator_function = function(emp) {
+        var data = $('input[name=utf8]').serialize()
+                + '&' + $('input[name=authenticity_token]').serialize()
+                + '&' + $("select[id^=time_record_date]").serialize()
+                + '&' + $("input[id^=time_records_" + emp + "]").serialize();
+        $.ajax({
+            url     : "bulk_calculator.js",
+            data    : data,
+            success : function(data) {
+                eval(data)
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('input').each(function(){
+            if( $(this).attr('type') == 'checkbox' ) {
+                this.onclick = function() {
+                    employee_id = this.id.substring(9);
+                    to_disable = !this.checked;
+                    $("input[id^=time_records_" + employee_id + "]").each(function() {
+                        this.disabled = to_disable;
+                    });
+                };
+            } else if( $(this).attr('type') != 'hidden' ) {
+                this.onkeyup = function() {
+                    employee_id = this.id.substring(13, this.id.indexOf('_', 14));
+                    calculator_function(employee_id);
+                };
+            }
+        })
+    });
+
+    <% for time_record in @time_records %>
+        calculator_function(<%= time_record.employee_id %>);
+    <% end %>
+</script>

@@ -1,0 +1,6 @@
+$("#regular_time").html("<%= @time_record.regular_time %>")
+$("#overtime").html("<%= @time_record.overtime %>")
+$("#regular_pay").html("<%= number_with_precision @time_record.regular_service_pay, :precision => 2 %>")
+$("#overtime_pay").html("<%= number_with_precision @time_record.overtime_pay, :precision => 2 %>")
+$("#allowance_pay").html("<%= number_with_precision @time_record.allowance_pay, :precision => 2 %>")
+$("#total_pay").html("<%= number_with_precision @time_record.total_pay, :precision => 2 %>")
