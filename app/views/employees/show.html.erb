@@ -1,0 +1,96 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @employee.name %>
+</p>
+
+<p>
+  <b>Company:</b>
+  <%= @employee.company %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%= @employee.status %>
+</p>
+
+<p>
+  <b>Working hours:</b>
+  <%= @employee.working_hours %>
+</p>
+
+<p>
+  <b>Salaried:</b>
+  <%= @employee.salaried %>
+</p>
+
+<p>
+  <b>Salary:</b>
+  <%= @employee.salary %>
+</p>
+
+<p>
+  <b>Overtime Multiplier:</b>
+  <%= @employee.overtime_multiplier %>
+</p>
+
+<p>
+  <b>Allowance:</b>
+  <%= @employee.allowance %>
+</p>
+
+<p>
+  <b>Include Saturday Salary:</b>
+  <%= @employee.include_saturday_salary %>
+</p>
+
+<br/>
+
+<%= link_to 'Edit', edit_employee_path(@employee) %> |
+<%= link_to 'Back', employees_path %>
+
+<br/><br/><br/>
+
+<div>
+  <% if @employee.time_records.any? %>
+      <h3>Time Records (<%= @start_date %> to <%= @end_date %>)</h3><br/>
+      <table class="table table-bordered">
+        <thead>
+            <tr>
+              <th>Date</th>
+              <th>AM Start</th>
+              <th>AM End</th>
+              <th>PM Start</th>
+              <th>PM End</th>
+              <th>Regular Hours</th>
+              <th>Overtime Hours</th>
+              <th>Regular Pay</th>
+              <th>Overtime Pay</th>
+              <th>Allowance</th>
+              <th>Total Pay</th>
+              <th>Deductions</th>
+              <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <%= render @time_records %>
+        </tbody>
+     </table>
+      <br/>
+      <%= paginate @pages, :theme => 'twitter-bootstrap' %>
+  <% end %>
+  <br/>
+  <strong>Pay For Week</strong><br/><br/>
+  <table>
+	<tr><td style="padding-right: 15px; text-align: right;">Reg Service</td><td><strong><%= @weekly_reg_pay %></strong></td></tr>
+    <tr><td style="padding-right: 15px; text-align: right;">Reg Service - Ded</td><td><strong><%= @weekly_reg_pay_with_ded %></strong></td></tr>
+    <tr><td style="padding-right: 15px; text-align: right;">OT</td><td><strong><%= @weekly_ot_pay %></strong></td></tr>
+    <tr><td style="padding-right: 15px; text-align: right;">Allowance</td><td><strong><%= @weekly_allowance %></strong></td></tr>
+    <tr><td style="padding-right: 15px; text-align: right;">Total Pay</td><td><strong><%= @weekly_total_pay %></strong></td></tr>
+    <tr><td>&nbsp;</td><td></td></tr>
+    <tr><td style="padding-right: 15px; text-align: right;">Sat Net Pay</td><td><strong><%= @sat_net_pay %></strong></td></tr>
+  </table>
+  <br/><br/>
+  <%= link_to 'Add Time Record', new_employee_time_record_path(@employee) %>
+</div>

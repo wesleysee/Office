@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.1'
 
+gem 'bootstrap-sass', '2.0.4'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
@@ -24,10 +26,11 @@ gem 'jquery-rails'
 
 gem 'enum_column3'
 
-gem 'will_paginate', '3.0.3'
-gem 'bootstrap-will_paginate', '0.0.6'
+#gem 'will_paginate', '3.0.3'
+#gem 'bootstrap-will_paginate', '0.0.6'
 
 gem 'kaminari'
+gem 'bootstrap-kaminari-views'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

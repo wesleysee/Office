@@ -1,0 +1,53 @@
+<%= form_for(@employee) do |f| %>
+  <% if @employee.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@employee.errors.count, "error") %> prohibited this employee from being saved:</h2>
+
+      <ul>
+      <% @employee.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :company %><br />
+    <%= f.text_field :company %>
+  </div>
+  <div class="field">
+    <%= f.label :status %><br />
+    <%= f.enum_select :status %>
+  </div>
+  <div class="field">
+    <%= f.label :working_hours %><br />
+    <%= f.number_field :working_hours, :in => 0..24 %>
+  </div>
+  <div class="field">
+    <%= f.label :salaried %><br />
+    <%= f.check_box :salaried %>
+  </div>
+  <div class="field">
+    <%= f.label :salary %><br />
+    <%= f.text_field :salary %>
+  </div>
+  <div class="field">
+    <%= f.label :overtime_multiplier, "Overtime Multipler" %><br />
+    <%= f.text_field :overtime_multiplier %>
+  </div>
+  <div class="field">
+    <%= f.label :allowance %><br />
+    <%= f.text_field :allowance %>
+  </div>
+<div class="field">
+  <%= f.label :include_saturday_salary %><br />
+  <%= f.check_box :include_saturday_salary %>
+</div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
