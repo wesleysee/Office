@@ -1,4 +1,4 @@
-<%= form_for(@employee) do |f| %>
+<%= form_for(@employee, :html => { :class => 'form-horizontal' }) do |f| %>
   <% if @employee.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@employee.errors.count, "error") %> prohibited this employee from being saved:</h2>
@@ -11,43 +11,63 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+  <div class="control-group">
+    <%= f.label :name, :class => "control-label" %>
+    <div class="controls">
+        <%= f.text_field :name %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :company %><br />
-    <%= f.text_field :company %>
+  <div class="control-group">
+    <%= f.label :company, :class => "control-label" %>
+    <div class="controls">
+        <%= f.text_field :company %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :status %><br />
-    <%= f.enum_select :status %>
+  <div class="control-group">
+    <%= f.label :status, :class => "control-label" %>
+    <div class="controls">
+        <%= f.enum_select :status %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :working_hours %><br />
-    <%= f.number_field :working_hours, :in => 0..24 %>
+  <div class="control-group">
+    <%= f.label :working_hours, :class => "control-label" %>
+    <div class="controls">
+        <%= f.number_field :working_hours, :in => 0..24, :style => "width: 50px" %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :salaried %><br />
-    <%= f.check_box :salaried %>
+  <div class="control-group">
+    <%= f.label :salaried, :class => "control-label" %>
+    <div class="controls">
+        <%= f.check_box :salaried %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :salary %><br />
-    <%= f.text_field :salary %>
+  <div class="control-group">
+    <%= f.label :salary, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :salary %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :overtime_multiplier, "Overtime Multipler" %><br />
-    <%= f.text_field :overtime_multiplier %>
+  <div class="control-group">
+    <%= f.label :overtime_multiplier, "Overtime Multipler", :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :overtime_multiplier %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :allowance %><br />
-    <%= f.text_field :allowance %>
+  <div class="control-group">
+    <%= f.label :allowance, :class => "control-label" %>
+    <div class="controls">
+      <%= f.text_field :allowance %>
+    </div>
   </div>
-<div class="field">
-  <%= f.label :include_saturday_salary %><br />
-  <%= f.check_box :include_saturday_salary %>
-</div>
-  <div class="actions">
-    <%= f.submit %>
+  <div class="control-group">
+    <%= f.label :include_saturday_salary, :class => "control-label" %>
+    <div class="controls">
+      <%= f.check_box :include_saturday_salary %>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit :class => "btn btn-primary" %>
+    </div>
   </div>
 <% end %>

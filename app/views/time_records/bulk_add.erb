@@ -17,7 +17,7 @@
     <div class="field">
       <%= date_select :time_record, :date, :default => {:year => Time.now.year, :month => Time.now.month, :day => (Time.now.day - 1 > 0 ? Time.now.day - 1 : Time.now.day)} %>
     </div>
-    <table>
+    <table class="table bulk-add">
       <tr>
         <th>Name</th>
         <th>AM Start</th>
@@ -37,11 +37,11 @@
         <%= fields_for "time_records[]", time_record do |f| %>
           <tr>
             <td><%= time_record.employee.name %></td>
-            <td><%= f.time_text_field :am_start, :index => time_record.employee_id %></td>
+            <td><%= f.time_text_field :am_start, :index => time_record.employee_id, :html => { :class => 'input-small' } %></td>
             <td><%= f.time_text_field :am_end, :index => time_record.employee_id %></td>
             <td><%= f.time_text_field :pm_start, :index => time_record.employee_id %></td>
             <td><%= f.time_text_field :pm_end, :index => time_record.employee_id %></td>
-            <td><%= f.text_field :deductions, :size => 10, :index => time_record.employee_id %></td>
+            <td><%= f.text_field :deductions, :size => 10, :index => time_record.employee_id, :style => "width: 60px" %></td>
             <td><span id="regular_time_<%= time_record.employee_id %>" /></td>
             <td><span id="overtime_<%= time_record.employee_id %>" /></td>
             <td><span id="regular_pay_<%= time_record.employee_id %>" /></td>
@@ -55,7 +55,7 @@
     </table>
     <br/>
     <div class="actions">
-    <%= submit_tag "Add Time Records" %>
+    <%= submit_tag "Add Time Records", :class => "btn btn-primary" %>
     </div>
 <% end %>
 

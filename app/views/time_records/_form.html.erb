@@ -1,4 +1,4 @@
-<%= form_for(@time_record, :url => form_url, :html => {:id => 'form_time_record' }) do |f| %>
+<%= form_for(@time_record, :url => form_url, :html => {:id => 'form_time_record', :class => 'form-horizontal' }) do |f| %>
     <% if @time_record.errors.any? %>
         <div id="error_explanation">
           <h2><%= pluralize(@time_record.errors.count, "error") %> prohibited this Time Record from being saved:</h2>
@@ -11,37 +11,53 @@
         </div>
     <% end %>
 
-    <div class="field">
-      <%= f.label :date %><br />
-      <%= date_select :time_record, :date %>
+    <div class="control-group">
+      <%= f.label :date, :class => "control-label" %>
+      <div class="controls">
+        <%= date_select :time_record, :date %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :salary, "Salary Rate" %><br />
-      <%= text_field :time_record, :salary %>
+    <div class="control-group">
+      <%= f.label :salary, "Salary Rate", :class => "control-label" %>
+      <div class="controls">
+        <%= text_field :time_record, :salary %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :am_start, "AM Start" %><br />
-      <%= time_text_field :time_record, :am_start %>
+    <div class="control-group">
+      <%= f.label :am_start, "AM Start", :class => "control-label" %>
+      <div class="controls">
+        <%= time_text_field :time_record, :am_start %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :am_end, "AM End" %><br />
-      <%= time_text_field :time_record, :am_end %>
+    <div class="control-group">
+      <%= f.label :am_end, "AM End", :class => "control-label" %>
+      <div class="controls">
+        <%= time_text_field :time_record, :am_end %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :pm_start, "PM Start" %><br />
-      <%= time_text_field :time_record, :pm_start %>
+    <div class="control-group">
+      <%= f.label :pm_start, "PM Start", :class => "control-label" %>
+      <div class="controls">
+        <%= time_text_field :time_record, :pm_start %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :pm_end, "PM End" %><br />
-      <%= time_text_field :time_record, :pm_end %>
+    <div class="control-group">
+      <%= f.label :pm_end, "PM End", :class => "control-label" %>
+      <div class="controls">
+        <%= time_text_field :time_record, :pm_end %>
+      </div>
     </div>
-    <div class="field">
-      <%= f.label :deductions %><br />
-      <%= f.text_field :deductions %>
+    <div class="control-group">
+      <%= f.label :deductions, :class => "control-label" %>
+      <div class="controls">
+        <%= f.text_field :deductions %>
+      </div>
     </div>
     <br/>
-    <div class="actions">
-      <%= f.submit %>
+    <div class="control-group">
+      <div class="controls">
+        <%= f.submit :class => "btn btn-primary" %>
+      </div>
     </div>
 <% end %>
 
