@@ -1,3 +1,8 @@
+<% if not @holiday.nil? %>
+$('#holiday_note').html("Note: Date is a holiday (<%= @holiday.name %>) with multiplier <%= @holiday.multiplier %>")
+<% else %>
+$('#holiday_note').html("")
+<% end %>
 <% for time_record in @time_records %>
 $("#regular_time_<%= time_record.employee_id %>").html("<%= time_record.regular_time %>")
 $("#overtime_<%= time_record.employee_id %>").html("<%= time_record.overtime %>")

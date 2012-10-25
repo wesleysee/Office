@@ -121,6 +121,7 @@ class TimeRecordsController < ApplicationController
   end
 
   def bulk_calculator
+    @holiday = Holiday.find_by_date Date.civil(params[:time_record]["date(1i)"].to_i, params[:time_record]["date(2i)"].to_i, params[:time_record]["date(3i)"].to_i)
     @time_records = []
     if not params.nil? and not params[:time_records].nil?
       params[:time_records].each do |p|

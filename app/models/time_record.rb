@@ -40,6 +40,10 @@ class TimeRecord < ActiveRecord::Base
     end
     self.allowance_pay = employee.allowance * self.regular_time_in_seconds / (employee.working_hours * 3600)
     holiday_multiplier = 0
+    if not self.date.nil?
+      holiday = Holiday.find_by_date self.date
+      holiday_multiplier = holiday.multiplier if not holiday.nil?
+    end
     self.holiday_pay = holiday_multiplier * (self.regular_service_pay + self.overtime_pay)
     self.adjusted_holiday_pay = holiday_multiplier * self.regular_service_pay
   end

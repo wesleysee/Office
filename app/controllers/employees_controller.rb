@@ -27,13 +27,16 @@ class EmployeesController < ApplicationController
     @weekly_ot_pay = 0
     @weekly_allowance = 0
     @sat_net_pay = 0
-	weekly_deductions = 0;
+	  @weekly_deductions = 0
+    sun_pay = 0
 
     has_saturday = false
     @time_records.each do |time_record|
-      next if time_record.date.sunday?
-	  @weekly_reg_pay += time_record.regular_service_pay
-      weekly_deductions += time_record.deductions
+      if time_record.date.sunday?
+        sun_pay = time_record.total_pay
+      end
+	    @weekly_reg_pay += time_record.regular_service_pay
+      @weekly_deductions += time_record.deductions
       @weekly_ot_pay += time_record.overtime_pay
       @weekly_allowance += time_record.allowance_pay
       if time_record.date.saturday?
@@ -43,8 +46,9 @@ class EmployeesController < ApplicationController
     end
 
     @weekly_reg_pay += @employee.salary if not has_saturday and @employee.include_saturday_salary
-	@weekly_reg_pay_with_ded = @weekly_reg_pay - weekly_deductions
+	  @weekly_reg_pay_with_ded = @weekly_reg_pay - @weekly_deductions
     @weekly_total_pay = @weekly_reg_pay_with_ded + @weekly_ot_pay + @weekly_allowance
+    @sat_sun_pay = @sat_net_pay + sun_pay
 
     respond_to do |format|
       format.html # show.html.erb
