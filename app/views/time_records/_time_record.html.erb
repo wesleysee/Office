@@ -1,5 +1,5 @@
 <tr>
-  <td><%= time_record.date %></td>
+  <td><%= time_record.date %><%= " (H)" if not Holiday.find_by_date(time_record.date).nil? %></td>
   <td><%= time_record.am_start_str %></td>
   <td><%= time_record.am_end_str %></td>
   <td><%= time_record.pm_start_str %></td>
@@ -9,7 +9,7 @@
   <td><%= time_record.regular_service_pay %></td>
   <td><%= time_record.overtime_pay %></td>
   <td><%= time_record.allowance_pay %></td>
-  <td><%= time_record.total_pay %></td>
+  <td><%= time_record.total_pay %><%= " (#{time_record.holiday_pay})" if time_record.holiday_pay > 0 %></td>
   <td><%= time_record.deductions %></td>
   <td><%= link_to 'Show', employee_time_record_path(@employee, time_record) %></td>
   <td><%= link_to 'Edit', edit_employee_time_record_path(@employee, time_record) %></td>

@@ -61,7 +61,11 @@
       <tr><td>Total Pay</td><td><strong><%= @weekly_total_pay %></strong></td></tr>
       <tr><td>&nbsp;</td><td></td></tr>
       <tr><td>Reg Service</td><td><strong><%= @weekly_reg_pay %></strong></td></tr>
-      <tr><td>Total Pay w/o Ded</td><td><strong><%= @weekly_total_pay + @weekly_deductions %></strong></td></tr>
+      <tr><td>Total Pay w/o Ded</td><td><strong><%= @weekly_total_pay + @weekly_deductions - @weekly_holiday_pay %></strong></td></tr>
+      <% if @weekly_holiday_pay > 0 %>
+        <tr><td>Holiday Pay</td><td><strong><%= @weekly_holiday_pay %></strong></td></tr>
+        <tr><td>Total Pay w/o Ded + Holiday</td><td><strong><%= @weekly_total_pay + @weekly_deductions %></strong></td></tr>
+      <% end %>
       <tr><td>&nbsp;</td><td></td></tr>
       <tr><td>Sat Net Pay</td><td><strong><%= @sat_net_pay %></strong></td></tr>
       <tr><td>Sat + Sun Pay</td><td><strong><%= @sat_sun_pay %></strong></td></tr>

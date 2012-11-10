@@ -28,25 +28,30 @@ class EmployeesController < ApplicationController
     @weekly_allowance = 0
     @sat_net_pay = 0
 	  @weekly_deductions = 0
+    @weekly_holiday_pay = 0
     sun_pay = 0
 
     has_saturday = false
+    temp_date = Date.today
     @time_records.each do |time_record|
+      temp_date = time_record.date
       if time_record.date.sunday?
         sun_pay = time_record.total_pay
+        next
       end
 	    @weekly_reg_pay += time_record.regular_service_pay
       @weekly_deductions += time_record.deductions
       @weekly_ot_pay += time_record.overtime_pay
       @weekly_allowance += time_record.allowance_pay
+      @weekly_holiday_pay += time_record.holiday_pay
       if time_record.date.saturday?
         has_saturday = true
         @sat_net_pay = time_record.total_pay - time_record.salary if @employee.include_saturday_salary
       end
     end
 
-    @weekly_reg_pay += @employee.salary if not has_saturday and @employee.include_saturday_salary
-	  @weekly_reg_pay_with_ded = @weekly_reg_pay - @weekly_deductions
+    @weekly_reg_pay += @employee.salary if not has_saturday and @employee.include_saturday_salary and (Date.today - temp_date.end_of_week).to_i <= 1
+	  @weekly_reg_pay_with_ded = @weekly_reg_pay - @weekly_deductions + @weekly_holiday_pay
     @weekly_total_pay = @weekly_reg_pay_with_ded + @weekly_ot_pay + @weekly_allowance
     @sat_sun_pay = @sat_net_pay + sun_pay
 

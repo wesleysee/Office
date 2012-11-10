@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121008071031) do
+ActiveRecord::Schema.define(:version => 20121103021152) do
 
   create_table "employees", :force => true do |t|
     t.string   "name"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 20121008071031) do
   create_table "holidays", :force => true do |t|
     t.date    "date"
     t.string  "name"
-    t.integer "multiplier"
+    t.decimal "multiplier", :precision => 10, :scale => 2
   end
 
   create_table "time_records", :force => true do |t|
