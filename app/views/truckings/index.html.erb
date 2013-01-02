@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing truckings</h1>
+
+<table class="table">
+  <tr>
+    <th>Name</th>
+    <th>Address</th>
+    <th>Phone Number</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @truckings.each do |trucking| %>
+  <tr>
+    <td><%= trucking.name %></td>
+    <td><%= trucking.address %></td>
+    <td><%= trucking.phone %></td>
+    <td><%= link_to 'Show', trucking %></td>
+    <td><%= link_to 'Edit', edit_trucking_path(trucking) %></td>
+    <td><%= link_to 'Destroy', trucking, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Trucking', new_trucking_path %>

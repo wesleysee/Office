@@ -1,4 +1,51 @@
 class EmployeesController < ApplicationController
+
+  # GET /employees/import_from_machine
+  def import_from_machine
+    employees = Employee.all
+
+    employees.each do |employee|
+      puts "checking #{employee.name}"
+      employee_records = employee.ta_record_infos
+      time_record = nil
+      employee_records.each do |employee_record|
+        record_date = employee_record.Date_Time.to_date
+        next if record_date >= Date.today
+        if time_record.nil? then
+          time_record = employee.time_records.where(:date => record_date).first
+        elsif time_record.date != record_date then
+          time_record.save if time_record.changed?
+          time_record = employee.time_records.where(:date => record_date).first
+        end
+        if time_record.nil?
+          time_record = employee.time_records.build
+          time_record.salary = time_record.employee.salary
+          time_record.date = record_date
+          time_record.deductions = 0
+        end
+        new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes)
+        if time_record.am_start.nil? then
+          time_record.am_start = new_time
+        elsif time_record.am_end.nil? then
+          time_record.am_end = new_time if time_record.am_start + 15.minutes < new_time
+        elsif time_record.pm_start.nil? then
+          time_record.pm_start = new_time if time_record.am_end + 15.minutes < new_time
+        elsif time_record.pm_end.nil? then
+          time_record.pm_end = new_time if time_record.pm_start + 15.minutes < new_time
+        end
+        employee_record.imported = true
+        employee_record.save
+      end
+      if not time_record.nil? then
+        time_record.save if time_record.changed?
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to employees_path, notice: 'Successfully imported.' }
+    end
+  end
+
   # GET /employees
   # GET /employees.json
   def index
@@ -20,8 +67,11 @@ class EmployeesController < ApplicationController
     @start_date = @end_date - 6.days
     @time_records = @employee.time_records.where("date >= ? and date <= ?", @start_date, @end_date)
     min_date = @employee.time_records.minimum(:date)
+    min_date = Date.today if min_date.nil?
     num_of_pages = ((this_week_end - min_date).to_i)/7 + 1
     @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
+
+    @deductions = @employee.deductions.where("year = ? and week = ?", @start_date.year, @start_date.cweek)
 
     @weekly_reg_pay = 0
     @weekly_ot_pay = 0
@@ -29,7 +79,13 @@ class EmployeesController < ApplicationController
     @sat_net_pay = 0
 	  @weekly_deductions = 0
     @weekly_holiday_pay = 0
+    @gov_deductions = 0
     sun_pay = 0
+
+    @deductions.each do |deduction|
+      @weekly_deductions += deduction.amount
+      @gov_deductions += deduction.amount
+    end
 
     has_saturday = false
     temp_date = Date.today

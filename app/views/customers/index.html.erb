@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Customers</h1>
+
+<%= form_tag customers_path, :method => :get, :remote=>true, :id => "customers_search" do %>
+
+<div class="row-fluid">
+  <div class="span4">
+    <div class="input-append">
+      <p>
+        <%= text_field_tag :search, params[:search] %>&#160;&#160;&#160;
+        <%= submit_tag "Search", :name => nil, :class => "btn" %>
+      </p>
+    </div>
+    <br/>
+    <%= link_to 'New Customer', new_customer_path %>
+  </div>
+  <div id="paginator" class="span8" style="text-align: right">
+    <%= page_entries_info @customers %>
+    <%= paginate @customers, :remote => true %>
+  </div>
+  </div>
+<br/>
+<table class="table pretty">
+  <tr id="headers">
+    <%= render 'headers' %>
+  </tr>
+
+  <tbody id="customers">
+    <%= render @customers %>
+  </tbody>
+</table>
+<% end %>
+
+<br />

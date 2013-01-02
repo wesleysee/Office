@@ -1,0 +1,72 @@
+<script>
+  function onDeliveryMethodChange(ele) {
+    var e = $(ele).next('select').first();
+    var e2 = e.next('input').first();
+    if (ele.value != 'trucking') {
+      e.disabled=true;
+      e.hide();
+      if (ele.value == 'deliver') {
+        e2.attr('placeholder', 'Location');
+      } else {
+        e2.attr('placeholder', 'Notes');
+      }
+    } else {
+      e.disabled=false;
+      e.show();
+      e2.attr('placeholder', 'Destination');
+    }
+  }
+
+</script>
+
+<%= nested_form_for(@customer, :html => { :class => 'form-horizontal' }) do |f| %>
+  <% if @customer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
+
+      <ul>
+      <% @customer.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="control-group">
+    <%= f.label :name, :class => "control-label" %>
+    <div class="controls">
+        <%= f.text_field :name %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :customer_deliveries, "Deliveries", :class => "control-label" %>
+    <div class="controls">
+      <%= f.fields_for :customer_deliveries do |delivery_form| %>
+        <%= delivery_form.enum_select :delivery_method, {}, { "style" => "width: 150px; margin-bottom: 10px; margin-right: 10px;", "onchange" => "onDeliveryMethodChange(this);" } %>
+        <%= delivery_form.collection_select(:trucking_id, Trucking.all, :id, :name, { :include_blank => "Select a Trucking..."}, { "style" => "width: 200px; margin-bottom: 10px; margin-right: 10px;" }) %>
+        <%= delivery_form.text_field :notes, :placeholder => "Notes", "style" => "width: 200px; margin-bottom: 10px;" %>
+        <span style="padding-left: 10px; vertical-align: 5px;"><%= delivery_form.link_to_remove "Remove" %></span>
+      <% end %>
+      <%= f.link_to_add "Add a Delivery", :customer_deliveries %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit :class => "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  $(document).on('nested:fieldAdded', function(event){
+    var field = event.field;
+    console.log(field.find('select').first());
+    onDeliveryMethodChange(field.find('select').first());
+  })
+
+  $('div .fields').each(function() {
+    onDeliveryMethodChange($(this).children().first());
+  });
+</script>

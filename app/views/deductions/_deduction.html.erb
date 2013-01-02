@@ -1,0 +1,6 @@
+<tr>
+  <td><%= deduction.deduction_type.name %></td>
+  <td><%= deduction.deduction_month %>/<%= deduction.deduction_year %></td>
+  <td><%= deduction.amount %></td>
+  <td><%= link_to 'Destroy', employee_deduction_path(@employee, deduction), confirm: 'Are you sure?', method: :delete %></td>
+</tr>

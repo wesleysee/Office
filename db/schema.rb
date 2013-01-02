@@ -11,7 +11,38 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121103021152) do
+ActiveRecord::Schema.define(:version => 20121228093909) do
+
+  create_table "customer_deliveries", :force => true do |t|
+    t.integer  "customer_id"
+    t.integer  "trucking_id"
+    t.datetime "created_at",                                                                     :null => false
+    t.datetime "updated_at",                                                                     :null => false
+    t.enum     "delivery_method", :limit => [:pickup, :deliver, :trucking], :default => :pickup
+    t.string   "notes"
+  end
+
+  create_table "customers", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "deduction_types", :force => true do |t|
+    t.string "name"
+  end
+
+  create_table "deductions", :force => true do |t|
+    t.integer  "employee_id"
+    t.integer  "year"
+    t.integer  "week"
+    t.decimal  "amount",            :precision => 10, :scale => 2
+    t.integer  "deduction_type_id"
+    t.integer  "deduction_year"
+    t.integer  "deduction_month"
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
+  end
 
   create_table "employees", :force => true do |t|
     t.string   "name"
@@ -32,6 +63,24 @@ ActiveRecord::Schema.define(:version => 20121103021152) do
     t.string  "name"
     t.decimal "multiplier", :precision => 10, :scale => 2
   end
+
+  create_table "ta_record_infos", :primary_key => "ID", :force => true do |t|
+    t.integer "Mach_Name",   :limit => 2
+    t.integer "Per_ID"
+    t.integer "Per_Code"
+    t.integer "Per_Finger",  :limit => 1
+    t.string  "Date_Time",   :limit => 20
+    t.integer "R_State",     :limit => 1
+    t.integer "In_Out",      :limit => 1
+    t.integer "R_Qian",      :limit => 1
+    t.integer "R_Qian_Type", :limit => 1
+    t.integer "Qian_Op"
+    t.integer "TA_OR_AT",    :limit => 1
+    t.integer "FP_Mode"
+    t.boolean "imported",                  :default => false, :null => false
+  end
+
+  add_index "ta_record_infos", ["Per_ID", "Date_Time"], :name => "index_ta_record_infos_on_Per_ID_and_imported_and_Date_Time"
 
   create_table "time_records", :force => true do |t|
     t.integer  "employee_id"
@@ -54,5 +103,15 @@ ActiveRecord::Schema.define(:version => 20121103021152) do
   end
 
   add_index "time_records", ["employee_id", "date"], :name => "index_time_records_on_employee_id_and_date"
+
+  create_table "truckings", :force => true do |t|
+    t.string   "name"
+    t.string   "address"
+    t.string   "phone"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "truckings", ["name"], :name => "truckings_name_unique", :unique => true
 
 end

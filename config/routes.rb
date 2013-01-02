@@ -1,16 +1,20 @@
 Office::Application.routes.draw do
 
+  match "/employees/import_from_machine" => "employees#import_from_machine"
   match "/employees/bulk_add_time_records" => "time_records#bulk_add"
   match "/employees/bulk_create_time_records" => "time_records#bulk_create"
   match "/employees/bulk_calculator" => "time_records#bulk_calculator"
 
   resources :employees
+  resources :truckings
+  resources :customers
 
   match "/employees/:employee_id/time_records/calculator" => "time_records#calculator"
   match "/employees/:employee_id/time_records/:id/calculator" => "time_records#calculator"
 
   resources :employees do
     resources :time_records
+    resources :deductions
   end
 
   # The priority is based upon order of creation:

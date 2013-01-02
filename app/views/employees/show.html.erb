@@ -62,9 +62,11 @@
       <tr><td>&nbsp;</td><td></td></tr>
       <tr><td>Reg Service</td><td><strong><%= @weekly_reg_pay %></strong></td></tr>
       <tr><td>Total Pay w/o Ded</td><td><strong><%= @weekly_total_pay + @weekly_deductions - @weekly_holiday_pay %></strong></td></tr>
+      <tr><td>Total Pay w/ Gov Ded</td><td><strong><%= @weekly_total_pay + @weekly_deductions - @weekly_holiday_pay - @gov_deductions %></strong></td></tr>
       <% if @weekly_holiday_pay > 0 %>
         <tr><td>Holiday Pay</td><td><strong><%= @weekly_holiday_pay %></strong></td></tr>
         <tr><td>Total Pay w/o Ded + Holiday</td><td><strong><%= @weekly_total_pay + @weekly_deductions %></strong></td></tr>
+        <tr><td>Total Pay w/ Gov Ded + Holiday</td><td><strong><%= @weekly_total_pay + @weekly_deductions - @gov_deductions %></strong></td></tr>
       <% end %>
       <tr><td>&nbsp;</td><td></td></tr>
       <tr><td>Sat Net Pay</td><td><strong><%= @sat_net_pay %></strong></td></tr>
@@ -79,7 +81,8 @@
   <div class="span12">
     <%= link_to 'Edit', edit_employee_path(@employee) %> |
     <%= link_to 'Back', employees_path %> |
-    <%= link_to 'Add Time Record', new_employee_time_record_path(@employee) %>
+    <%= link_to 'Add Time Record', new_employee_time_record_path(@employee) %> |
+    <%= link_to 'Add Deduction for week', new_employee_deduction_path(@employee, :week_ago => params[:page]) %>
   </div>
 </div>
 
@@ -87,8 +90,8 @@
 
 <div class="row-fluid">
   <div class="span12">
-  <% if @employee.time_records.any? %>
       <h3>Time Records (<%= @start_date %> to <%= @end_date %>)</h3><br/>
+    <% if @time_records.any? %>
       <table class="table table-bordered">
         <thead>
             <tr>
@@ -111,7 +114,30 @@
             <%= render @time_records %>
         </tbody>
      </table>
-      <%= paginate @pages, :theme => 'twitter-bootstrap' %>
-  <% end %>
+     <% end %>
+     <%= paginate @pages, :theme => 'twitter-bootstrap' %>
+  </div>
+</div>
+
+<br/><br/>
+
+<div class="row-fluid">
+  <div class="span6">
+    <% if @deductions.any? %>
+      <h3>Deductions for week</h3><br/>
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>Type</th>
+          <th>Month</th>
+          <th>Amount</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%= render @deductions %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 </div>

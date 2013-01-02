@@ -46,3 +46,6 @@ gem 'bootstrap-kaminari-views'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+gem 'capybara'
+gem 'nested_form'

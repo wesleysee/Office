@@ -17,8 +17,8 @@ class TimeRecord < ActiveRecord::Base
 
   def calculate_hours
     total_seconds = 0
-    total_seconds += (self.am_end - self.am_start) unless self.am_start.nil?
-    total_seconds += (self.pm_end - self.pm_start) unless self.pm_start.nil?
+    total_seconds += (self.am_end - self.am_start) unless self.am_start.nil? or self.am_end.nil?
+    total_seconds += (self.pm_end - self.pm_start) unless self.pm_start.nil? or self.pm_end.nil?
     if total_seconds > employee.working_hours * 60 * 60
       self.regular_time_in_seconds = employee.working_hours * 60 * 60
       self.overtime_in_seconds = total_seconds - employee.working_hours * 60 * 60
@@ -33,19 +33,19 @@ class TimeRecord < ActiveRecord::Base
       self.salary = employee.salary
     end
     self.regular_service_pay = self.salary * self.regular_time_in_seconds / (employee.working_hours * 3600)
-    self.overtime_pay = (self.salary / employee.working_hours) * employee.overtime_multiplier * self.overtime_in_seconds / 3600
-    if self.date.sunday?
-      self.regular_service_pay *= 1.5
-      self.overtime_pay *= 1.5
-    end
     self.allowance_pay = employee.allowance * self.regular_time_in_seconds / (employee.working_hours * 3600)
+    self.overtime_pay = (self.salary / employee.working_hours) * self.overtime_in_seconds / 3600
     holiday_multiplier = 0
     if not self.date.nil?
       holiday = Holiday.find_by_date self.date
       holiday_multiplier = holiday.multiplier if not holiday.nil?
     end
-    self.holiday_pay = holiday_multiplier * (self.regular_service_pay + self.overtime_pay)
+    self.holiday_pay = holiday_multiplier * (self.regular_service_pay + self.overtime_pay * employee.overtime_multiplier)
     self.adjusted_holiday_pay = holiday_multiplier * self.regular_service_pay
+    self.holiday_pay = self.salary if self.holiday_pay == 0 and holiday_multiplier == 1
+    self.adjusted_holiday_pay = self.salary if self.adjusted_holiday_pay == 0 and holiday_multiplier == 1
+    self.regular_service_pay *= 1.5 if self.date.sunday?
+    self.overtime_pay = self.date.sunday? ? self.overtime_pay * 1.5 : self.overtime_pay * employee.overtime_multiplier
   end
 
   def regular_time
@@ -89,7 +89,7 @@ class TimeRecord < ActiveRecord::Base
   private
 
     def display_time_in_hours(time)
-      Time.at(time).utc.strftime("%H:%M")
+      Time.at(time).utc.strftime("%H:%M") unless time.nil?
     end
 
     def time_end_is_less_than_time_start

@@ -1,5 +1,8 @@
 class Employee < ActiveRecord::Base
   has_many :time_records, dependent: :destroy
+  has_many :deductions, dependent: :destroy
+  has_many :ta_record_infos, :foreign_key => "Per_Code", :conditions => {:imported => false},
+           :order => "Date_Time asc", dependent: :destroy
 
   after_initialize :init
 
