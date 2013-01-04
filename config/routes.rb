@@ -8,6 +8,7 @@ Office::Application.routes.draw do
   resources :employees
   resources :truckings
   resources :customers
+  resources :time_records
 
   match "/employees/:employee_id/time_records/calculator" => "time_records#calculator"
   match "/employees/:employee_id/time_records/:id/calculator" => "time_records#calculator"

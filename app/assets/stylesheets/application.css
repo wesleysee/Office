@@ -25,3 +25,7 @@
 .pretty th .desc {
     background-image: url(/assets/down_arrow.gif);
 }
+
+.fields {
+    margin-bottom: 10px;
+}

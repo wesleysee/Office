@@ -11,6 +11,12 @@
         </div>
     <% end %>
 
+  <div class="control-group input-append">
+    <%= f.label :employee, :class => "control-label" %>
+    <div class="controls" style="margin-top: 5px">
+      <%= @time_record.employee.name %>
+    </div>
+  </div>
     <div class="control-group">
       <%= f.label :date, :class => "control-label" %>
       <div class="controls">

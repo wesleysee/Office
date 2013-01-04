@@ -2,10 +2,10 @@
   function onDeliveryMethodChange(ele) {
     var e = $(ele).next('select').first();
     var e2 = e.next('input').first();
-    if (ele.value != 'trucking') {
+    if (ele.val() != 'trucking') {
       e.disabled=true;
       e.hide();
-      if (ele.value == 'deliver') {
+      if (ele.val() == 'deliver') {
         e2.attr('placeholder', 'Location');
       } else {
         e2.attr('placeholder', 'Notes');
@@ -39,16 +39,33 @@
     </div>
   </div>
 
+  <br/>
+
   <div class="control-group">
     <%= f.label :customer_deliveries, "Deliveries", :class => "control-label" %>
     <div class="controls">
       <%= f.fields_for :customer_deliveries do |delivery_form| %>
-        <%= delivery_form.enum_select :delivery_method, {}, { "style" => "width: 150px; margin-bottom: 10px; margin-right: 10px;", "onchange" => "onDeliveryMethodChange(this);" } %>
-        <%= delivery_form.collection_select(:trucking_id, Trucking.all, :id, :name, { :include_blank => "Select a Trucking..."}, { "style" => "width: 200px; margin-bottom: 10px; margin-right: 10px;" }) %>
-        <%= delivery_form.text_field :notes, :placeholder => "Notes", "style" => "width: 200px; margin-bottom: 10px;" %>
-        <span style="padding-left: 10px; vertical-align: 5px;"><%= delivery_form.link_to_remove "Remove" %></span>
+        <%= delivery_form.enum_select :delivery_method, {}, { "style" => "width: 150px; margin-right: 10px;", "onchange" => "onDeliveryMethodChange($(this));" } %>
+        <%= delivery_form.collection_select(:trucking_id, Trucking.order(:name), :id, :name, { :include_blank => "Select a Trucking..."}, { "style" => "width: 200px; margin-right: 10px;" }) %>
+        <%= delivery_form.text_field :notes, :placeholder => "Notes", "style" => "width: 200px;" %>
+        <span style="padding-left: 10px;"><%= delivery_form.link_to_remove "Remove" %></span>
       <% end %>
       <%= f.link_to_add "Add a Delivery", :customer_deliveries %>
+    </div>
+  </div>
+
+  <br/>
+
+  <div class="control-group">
+    <%= f.label :customer_products, "Products", :class => "control-label" %>
+    <div class="controls">
+      <%= f.fields_for :customer_products do |product_form| %>
+        <%= product_form.text_field :product_name, :placeholder => "Product" %>
+        <%= product_form.text_field :price, :placeholder => "Price" %>
+        <%= product_form.text_field :unit, :placeholder => "Unit" %>
+        <span style="padding-left: 10px;"><%= product_form.link_to_remove "Remove" %></span>
+      <% end %>
+      <%= f.link_to_add "Add a Product", :customer_products %>
     </div>
   </div>
 
@@ -62,7 +79,6 @@
 <script>
   $(document).on('nested:fieldAdded', function(event){
     var field = event.field;
-    console.log(field.find('select').first());
     onDeliveryMethodChange(field.find('select').first());
   })
 

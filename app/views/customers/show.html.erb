@@ -41,6 +41,32 @@
 <br/>
 
 <div class="row-fluid">
+  <div class="span8">
+    <h3>Products</h3><br/>
+    <% if @customer.customer_products.any? %>
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @customer.customer_products.each do |customer_product| %>
+          <tr>
+            <td><%= customer_product.product_name %></td>
+            <td><%= customer_product.price %> per <%= customer_product.unit %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+<br/>
+
+<div class="row-fluid">
   <div class="span12">
     <%= link_to 'Edit', edit_customer_path(@customer) %> |
     <%= link_to 'Back', customers_path %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121228093909) do
+ActiveRecord::Schema.define(:version => 20130102090748) do
 
   create_table "customer_deliveries", :force => true do |t|
     t.integer  "customer_id"
@@ -20,6 +20,15 @@ ActiveRecord::Schema.define(:version => 20121228093909) do
     t.datetime "updated_at",                                                                     :null => false
     t.enum     "delivery_method", :limit => [:pickup, :deliver, :trucking], :default => :pickup
     t.string   "notes"
+  end
+
+  create_table "customer_products", :force => true do |t|
+    t.integer  "customer_id"
+    t.string   "product_name"
+    t.decimal  "price",        :precision => 10, :scale => 2
+    t.string   "unit"
+    t.datetime "created_at",                                  :null => false
+    t.datetime "updated_at",                                  :null => false
   end
 
   create_table "customers", :force => true do |t|

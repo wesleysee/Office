@@ -1,5 +1,10 @@
 class TimeRecordsController < ApplicationController
 
+  # GET /time_records
+  def index
+    @time_records = TimeRecord.order(:created_at).page params[:page]
+  end
+
   def show
     @employee = Employee.find(params[:employee_id])
     @time_record = @employee.time_records.find_by_id(params[:id])

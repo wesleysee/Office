@@ -42,7 +42,7 @@ class EmployeesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to employees_path, notice: 'Successfully imported.' }
+      format.html { redirect_to time_records_path, notice: 'Successfully imported.' }
     end
   end
 
