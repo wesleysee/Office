@@ -29,6 +29,7 @@ class TimeRecordsController < ApplicationController
   def edit
     @employee = Employee.find(params[:employee_id])
     @time_record = @employee.time_records.find_by_id(params[:id])
+    @time_record.init
   end
 
   def create

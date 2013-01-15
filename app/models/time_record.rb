@@ -17,6 +17,7 @@ class TimeRecord < ActiveRecord::Base
 
   def calculate_hours
     total_seconds = 0
+    puts "#{self.pm_start} :: #{self.pm_end}"
     total_seconds += (self.am_end - self.am_start) unless self.am_start.nil? or self.am_end.nil?
     total_seconds += (self.pm_end - self.pm_start) unless self.pm_start.nil? or self.pm_end.nil?
     if total_seconds > employee.working_hours * 60 * 60
@@ -77,13 +78,14 @@ class TimeRecord < ActiveRecord::Base
   end
 
   def init
-    self.am_start = Date.today + 8.hour + 30.minute
-    self.am_end = Date.today + 12.hour + 0.minute
-    self.pm_start = Date.today + 12.hour + 30.minute
-    self.pm_end = Date.today + 18.hour + 0.minute
-    self.salary = self.employee.salary unless self.employee.nil?
-    self.date = Date.today.monday? ? Date.today - 2.days : Date.today - 1.day
-    self.deductions = 0
+    default_date = Date.new(2000, 1, 1)
+    self.am_start = default_date + 8.hour + 30.minute if self.am_start.nil?
+    self.am_end = default_date + 12.hour + 0.minute if self.am_end.nil?
+    self.pm_start = default_date + 12.hour + 30.minute if self.pm_start.nil?
+    self.pm_end = default_date + 18.hour + 0.minute if self.pm_end.nil?
+    self.salary = self.employee.salary unless not self.salary.nil? or self.employee.nil?
+    self.date = Date.today.monday? ? Date.today - 2.days : Date.today - 1.day if self.date.nil?
+    self.deductions = 0 if self.deductions.nil?
   end
 
   private

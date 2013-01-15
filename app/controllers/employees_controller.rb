@@ -5,7 +5,6 @@ class EmployeesController < ApplicationController
     employees = Employee.all
 
     employees.each do |employee|
-      puts "checking #{employee.name}"
       employee_records = employee.ta_record_infos
       time_record = nil
       employee_records.each do |employee_record|
@@ -71,7 +70,7 @@ class EmployeesController < ApplicationController
     num_of_pages = ((this_week_end - min_date).to_i)/7 + 1
     @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
 
-    @deductions = @employee.deductions.where("year = ? and week = ?", @start_date.year, @start_date.cweek)
+    @deductions = @employee.deductions.where("year = ? and week = ?", @end_date.year, @end_date.cweek)
 
     @weekly_reg_pay = 0
     @weekly_ot_pay = 0
