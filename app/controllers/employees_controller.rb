@@ -1,7 +1,79 @@
+require 'win32ole'
+
 class EmployeesController < ApplicationController
+
+  # GET /employees/generate_time_records
+  def generate_time_records
+    time_record_generate
+
+    respond_to do |format|
+      format.html { redirect_to employees_path, notice: 'Successfully generated.' }
+    end
+  end
 
   # GET /employees/import_from_machine
   def import_from_machine
+    time_record_import
+
+    respond_to do |format|
+      format.html { redirect_to time_records_path, notice: 'Successfully imported.' }
+    end
+  end
+
+  def time_record_generate
+    path = 'C:\Users\Spencer\Dropbox\wesley\Time Records\\'
+    employees = Employee.where("generate_time_record = true").order("id asc")
+
+    end_date = Date.today.monday? ? Date.today - 1.day : Date.today.end_of_week
+    start_date = end_date - 6.days
+
+    WIN32OLE.ole_initialize
+    excel = WIN32OLE::new('excel.Application')
+    excel.DisplayAlerts = false
+    workbook = excel.Workbooks.Open(path + 'TIME_RECORD_template.xlsx')
+    workbook.SaveAs(path + start_date.to_s + '_' + end_date.to_s + '.xlsx')
+
+    template = workbook.Worksheets('time record')
+
+    employees.each do |employee|
+      template.Copy(template)
+      worksheet = workbook.Worksheets(workbook.Worksheets.count - 1)
+      worksheet.Name = employee.name
+
+      replace_cell(worksheet, 6, 2, employee.name)
+      replace_cell(worksheet, 8, 2, start_date.strftime("%m/%d/%Y"))
+      replace_cell(worksheet, 8, 5, end_date.strftime("%m/%d/%Y"))
+
+      if employee.salaried then
+        replace_cell(worksheet, 6, 8, employee.salary.to_s)
+      end
+
+      @time_records = employee.time_records.where("date >= ? and date <= ?", start_date, end_date)
+
+      (15..20).each do |i|
+        worksheet.Cells(i,6).Formula = "=IF(C#{i}-B#{i}+E#{i}-D#{i} = TIME(0,0,0), \"-\"," +
+            "IF(C#{i}-B#{i}+E#{i}-D#{i}>TIME(#{employee.working_hours},0,0),TIME(#{employee.working_hours},0,0),C#{i}-B#{i}+E#{i}-D#{i}))"
+        worksheet.Cells(i,7).Formula = "=IF(C#{i}-B#{i}+E#{i}-D#{i}>TIME(#{employee.working_hours},0,0),C#{i}-B#{i}+E#{i}-D#{i} - TIME(#{employee.working_hours},0,0),\"-\")"
+      end
+
+      @time_records.each do |time_record|
+        row = time_record.date.cwday + 14
+        replace_cell(worksheet, row, 2, time_record.am_start_str)
+        replace_cell(worksheet, row, 3, time_record.am_end_str)
+        replace_cell(worksheet, row, 4, time_record.pm_start_str)
+        replace_cell(worksheet, row, 5, time_record.pm_end_str)
+      end
+
+    end
+
+    template.Delete
+    workbook.save
+    workbook.close
+    excel.Quit()
+    WIN32OLE.ole_uninitialize
+  end
+
+  def time_record_import
     employees = Employee.all
 
     employees.each do |employee|
@@ -9,7 +81,7 @@ class EmployeesController < ApplicationController
       time_record = nil
       employee_records.each do |employee_record|
         record_date = employee_record.Date_Time.to_date
-        next if record_date >= Date.today
+        next if record_date >= Date.today and Time.new.hour < 18
         if time_record.nil? then
           time_record = employee.time_records.where(:date => record_date).first
         elsif time_record.date != record_date then
@@ -38,10 +110,6 @@ class EmployeesController < ApplicationController
       if not time_record.nil? then
         time_record.save if time_record.changed?
       end
-    end
-
-    respond_to do |format|
-      format.html { redirect_to time_records_path, notice: 'Successfully imported.' }
     end
   end
 
@@ -176,4 +244,9 @@ class EmployeesController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  private
+    def replace_cell(worksheet, row, column, value)
+      worksheet.Cells(row,column).Value = value
+    end
 end

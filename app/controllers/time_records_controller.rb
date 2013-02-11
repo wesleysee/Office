@@ -19,6 +19,9 @@ class TimeRecordsController < ApplicationController
     @employee = Employee.find(params[:employee_id])
     @time_record = @employee.time_records.build
     @time_record.init
+    last_time_record = TimeRecord.find_by_employee_id(@employee.id)
+    @time_record.date = last_time_record.date + 1.day
+    @time_record.date = @time_record.date + 1.day if @time_record.date.sunday?
 
     respond_to do |format|
       format.html # new.html.erb

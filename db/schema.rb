@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130102090748) do
+ActiveRecord::Schema.define(:version => 20130209020414) do
 
   create_table "customer_deliveries", :force => true do |t|
     t.integer  "customer_id"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(:version => 20130102090748) do
     t.datetime "created_at",                                                                                                 :null => false
     t.datetime "updated_at",                                                                                                 :null => false
     t.boolean  "include_saturday_salary"
+    t.boolean  "generate_time_record"
   end
 
   create_table "holidays", :force => true do |t|

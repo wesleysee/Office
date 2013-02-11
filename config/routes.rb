@@ -1,5 +1,6 @@
 Office::Application.routes.draw do
 
+  match "/employees/generate_time_records" => "employees#generate_time_records"
   match "/employees/import_from_machine" => "employees#import_from_machine"
   match "/employees/bulk_add_time_records" => "time_records#bulk_add"
   match "/employees/bulk_create_time_records" => "time_records#bulk_create"
