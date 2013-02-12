@@ -93,6 +93,25 @@ ActiveRecord::Schema.define(:version => 20130211093707) do
 
   add_index "ta_record_infos", ["Per_ID", "Date_Time"], :name => "index_ta_record_infos_on_Per_ID_and_imported_and_Date_Time"
 
+  create_table "ta_record_infos_copy", :primary_key => "ID", :force => true do |t|
+    t.integer  "Mach_Name",   :limit => 2
+    t.integer  "Per_ID"
+    t.integer  "Per_Code"
+    t.integer  "Per_Finger",  :limit => 1
+    t.string   "Date_Time",   :limit => 20
+    t.integer  "R_State",     :limit => 1
+    t.integer  "In_Out",      :limit => 1
+    t.integer  "R_Qian",      :limit => 1
+    t.integer  "R_Qian_Type", :limit => 1
+    t.integer  "Qian_Op"
+    t.integer  "TA_OR_AT",    :limit => 1
+    t.integer  "FP_Mode"
+    t.boolean  "imported",                  :default => false, :null => false
+    t.datetime "created_at"
+  end
+
+  add_index "ta_record_infos_copy", ["Per_ID", "Date_Time"], :name => "index_ta_record_infos_on_Per_ID_and_imported_and_Date_Time"
+
   create_table "time_records", :force => true do |t|
     t.integer  "employee_id"
     t.date     "date"

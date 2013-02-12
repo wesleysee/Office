@@ -49,3 +49,5 @@ gem 'bootstrap-kaminari-views'
 
 gem 'capybara'
 gem 'nested_form'
+
+gem 'axlsx', '~> 1.3.5'
