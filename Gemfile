@@ -9,6 +9,9 @@ gem 'bootstrap-sass', '2.0.4'
 
 gem 'mysql2'
 
+group :production do
+  gem 'therubyracer'
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
