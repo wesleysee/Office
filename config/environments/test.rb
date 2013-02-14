@@ -34,4 +34,6 @@ Office::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  config.time_records_folder_location = 'C:/Users/Spencer/Dropbox/Time Records/'
 end

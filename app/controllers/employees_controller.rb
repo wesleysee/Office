@@ -21,7 +21,8 @@ class EmployeesController < ApplicationController
   end
 
   def time_record_generate
-    path = 'C:/Users/Spencer/Dropbox/wesley/Time Records/'
+    path = Rails.application.config.time_records_folder_location
+    puts Rails.application.config.time_records_folder_location
     employees = Employee.where("generate_time_record = true").order("id asc")
 
     end_date = (Date.today.monday? ? Date.today - 1.day : Date.today.end_of_week) - 1.day

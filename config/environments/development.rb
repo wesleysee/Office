@@ -36,4 +36,6 @@ Office::Application.configure do
   config.assets.debug = false
 
   #config.log_level = :warn
+
+  config.time_records_folder_location = 'C:/Users/Spencer/Dropbox/Time Records/'
 end
