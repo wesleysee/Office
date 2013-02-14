@@ -37,5 +37,5 @@ Office::Application.configure do
 
   #config.log_level = :warn
 
-  config.time_records_folder_location = '/home/ec2-user/Dropbox/wesley/Time Records/'
+  config.time_records_folder_location = '/home/ec2-user/Dropbox/Time Records/'
 end
