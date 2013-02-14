@@ -17,7 +17,6 @@ class TimeRecord < ActiveRecord::Base
 
   def calculate_hours
     total_seconds = 0
-    puts "#{self.pm_start} :: #{self.pm_end}"
     total_seconds += (self.am_end - self.am_start) unless self.am_start.nil? or self.am_end.nil?
     total_seconds += (self.pm_end - self.pm_start) unless self.pm_start.nil? or self.pm_end.nil?
     if total_seconds > employee.working_hours * 60 * 60
