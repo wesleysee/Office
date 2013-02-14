@@ -139,6 +139,7 @@ class EmployeesController < ApplicationController
   def time_record_import
     employees = Employee.all
 
+    count = 0
     employees.each do |employee|
       next if employee.salaried and employee.include_saturday_salary
       employee_records = employee.ta_record_infos
@@ -170,11 +171,14 @@ class EmployeesController < ApplicationController
         end
         employee_record.imported = true
         employee_record.save
+        count += 1
       end
-      if not time_record.nil? then
-        time_record.save if time_record.changed?
+      if not time_record.nil? and time_record.changed? then
+        time_record.save
+        count += 1
       end
     end
+    count
   end
 
   # GET /employees
