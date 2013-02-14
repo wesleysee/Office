@@ -141,6 +141,7 @@ class EmployeesController < ApplicationController
     employees = Employee.all
 
     employees.each do |employee|
+      next if employee.salaried and employee.include_saturday_salary
       employee_records = employee.ta_record_infos
       time_record = nil
       employee_records.each do |employee_record|
