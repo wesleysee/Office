@@ -160,14 +160,14 @@ class EmployeesController < ApplicationController
           time_record.deductions = 0
         end
         new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes)
-        if time_record.am_start.nil? then
+        if new_time.hour < 11 and time_record.am_start.nil? then
           time_record.am_start = new_time
-        elsif time_record.am_end.nil? then
-          time_record.am_end = new_time if time_record.am_start + 15.minutes < new_time
-        elsif time_record.pm_start.nil? then
-          time_record.pm_start = new_time if time_record.am_end + 15.minutes < new_time
+        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.am_end.nil? then
+          time_record.am_end = new_time
+        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.pm_start.nil? then
+          time_record.pm_start = new_time
         elsif time_record.pm_end.nil? then
-          time_record.pm_end = new_time if time_record.pm_start + 15.minutes < new_time
+          time_record.pm_end = new_time
         end
         employee_record.imported = true
         employee_record.save
@@ -200,7 +200,7 @@ class EmployeesController < ApplicationController
     this_week_end = Date.today.monday? ? Date.today - 1.day : Date.today.end_of_week
     @end_date = this_week_end - (weeks_before.weeks)
     @start_date = @end_date - 6.days
-    @time_records = @employee.time_records.where("date >= ? and date <= ?", @start_date, @end_date)
+    @time_records = @employee.time_records.where("date >= ? and date <= ?", @start_date, @end_date).reverse
     min_date = @employee.time_records.minimum(:date)
     min_date = Date.today if min_date.nil?
     num_of_pages = ((this_week_end - min_date).to_i)/7 + 1
@@ -225,6 +225,7 @@ class EmployeesController < ApplicationController
     has_saturday = false
     temp_date = Date.today
     @time_records.each do |time_record|
+      puts time_record.date
       temp_date = time_record.date
       if time_record.date.sunday?
         sun_pay = time_record.total_pay

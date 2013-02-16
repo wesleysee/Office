@@ -6,12 +6,6 @@
   <tr>
     <th>Name</th>
     <th>Company</th>
-    <th>Status</th>
-    <th>Working hours</th>
-    <th>Salaried</th>
-    <th>Salary</th>
-    <th>Overtime Multiplier</th>
-    <th>Allowance</th>
     <th></th>
     <th></th>
     <th></th>
@@ -21,12 +15,6 @@
   <tr>
     <td><%= employee.name %></td>
     <td><%= employee.company %></td>
-    <td><%= employee.status %></td>
-    <td><%= employee.working_hours %></td>
-    <td><%= employee.salaried %></td>
-    <td><%= employee.salary %></td>
-    <td><%= employee.overtime_multiplier %></td>
-    <td><%= employee.allowance %></td>
     <td><%= link_to 'Show', employee %></td>
     <td><%= link_to 'Edit', edit_employee_path(employee) %></td>
     <td><%= link_to 'Destroy', employee, confirm: 'Are you sure?', method: :delete %></td>

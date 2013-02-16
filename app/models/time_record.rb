@@ -11,8 +11,14 @@ class TimeRecord < ActiveRecord::Base
   before_save :do_calculations
 
   def do_calculations
+    check_lunch_hours
     calculate_hours
     calculate_pay
+  end
+
+  def check_lunch_hours
+    self.am_end = Date.new(2000, 1, 1) + 12.hour + 0.minute if self.am_end.nil? and not self.am_start.nil? and not self.pm_end.nil?
+    self.pm_start = self.am_end + self.employee.lunch_minutes.minute if self.pm_start.nil? and not self.am_end.nil? and not self.pm_end.nil?
   end
 
   def calculate_hours
