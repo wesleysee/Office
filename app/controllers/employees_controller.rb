@@ -2,6 +2,39 @@ require 'axlsx'
 
 class EmployeesController < ApplicationController
 
+  # GET /employees/show_monthly_report
+  def show_monthly_report
+    months_before = (params[:page].nil? ? 1 : params[:page]).to_i - 1
+    this_month_end = Date.today.end_of_month
+    @end_date = (this_month_end - (months_before.months)).end_of_month
+    @start_date = @end_date.beginning_of_month
+
+    min_date = TimeRecord.minimum(:date)
+    min_date = Date.today if min_date.nil?
+    num_of_pages = ((this_month_end - min_date).to_i)/30 + 1
+    @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
+
+    @records = ActiveRecord::Base.connection.select_all('SELECT id, name, SUM(hours_estimate) AS hours, SUM(regular_pay) AS regular_pay, SUM(allowance_pay) AS allowance_pay, SUM(regular_pay + allowance_pay) AS total_pay
+FROM
+(SELECT e.id, e.name, t.date, t.regular_time_in_seconds / 3600 AS hours,
+CASE WHEN t.regular_time_in_seconds/(3600) >= 6 THEN 1
+WHEN t.regular_time_in_seconds/(3600) = 0 THEN 0
+ELSE 0.5 END AS hours_estimate,
+t.regular_service_pay +
+CASE WHEN e.include_saturday_salary = 1 THEN t.adjusted_holiday_pay ELSE t.overtime_pay + t.holiday_pay END AS regular_pay,
+t.allowance_pay AS allowance_pay
+FROM employees e
+INNER JOIN time_records t ON e.id = t.employee_id
+LEFT OUTER JOIN holidays h ON h.date = t.date
+WHERE t.date >= \'' + @start_date.to_s + '\' AND t.date < \'' + @end_date.to_s + '\' AND (DAYOFWEEK(t.date) != 1 OR h.id IS NOT NULL) AND e.salaried = 1)
+t GROUP BY t.name
+ORDER BY t.name ASC')
+
+    respond_to do |format|
+      format.html # show_monthly_report.html.erb
+    end
+  end
+
   # GET /employees/generate_time_records
   def generate_time_records
     time_record_generate
