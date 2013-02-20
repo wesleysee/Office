@@ -15,9 +15,9 @@
   <tr>
     <td><%= employee.name %></td>
     <td><%= employee.company %></td>
-    <td><%= link_to 'Show', employee %></td>
-    <td><%= link_to 'Edit', edit_employee_path(employee) %></td>
-    <td><%= link_to 'Destroy', employee, confirm: 'Are you sure?', method: :delete %></td>
+    <td><%= link_to '<i class="icon-eye-open"></i>'.html_safe, employee %></td>
+    <td><%= link_to '<i class="icon-pencil"></i>'.html_safe, edit_employee_path(employee) %></td>
+    <td><%= link_to '<i class="icon-remove"></i>'.html_safe, employee, confirm: 'Are you sure?', method: :delete %></td>
   </tr>
 <% end %>
 </table>

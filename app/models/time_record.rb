@@ -10,6 +10,10 @@ class TimeRecord < ActiveRecord::Base
 
   before_save :do_calculations
 
+  def incomplete?
+    self.am_start.nil? or self.am_end.nil? or self.pm_start.nil? or self.pm_end.nil?
+  end
+
   def do_calculations
     check_lunch_hours
     calculate_hours
