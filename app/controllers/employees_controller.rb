@@ -26,7 +26,7 @@ t.allowance_pay AS allowance_pay
 FROM employees e
 INNER JOIN time_records t ON e.id = t.employee_id
 LEFT OUTER JOIN holidays h ON h.date = t.date
-WHERE t.date >= \'' + @start_date.to_s + '\' AND t.date < \'' + @end_date.to_s + '\' AND (DAYOFWEEK(t.date) != 1 OR h.id IS NOT NULL) AND e.salaried = 1)
+WHERE t.date >= \'' + @start_date.to_s + '\' AND t.date <= \'' + @end_date.to_s + '\' AND (DAYOFWEEK(t.date) != 1 OR h.id IS NOT NULL) AND e.salaried = 1)
 t GROUP BY t.name
 ORDER BY t.name ASC')
 
