@@ -195,7 +195,7 @@ ORDER BY t.name ASC')
         new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes)
         if new_time.hour < 11 and time_record.am_start.nil? then
           time_record.am_start = new_time
-        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.am_end.nil? then
+        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.am_end.nil? and not time_record.am_start.nil? then
           time_record.am_end = new_time
         elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.pm_start.nil? then
           time_record.pm_start = new_time if time_record.am_end + 5.minutes < new_time
