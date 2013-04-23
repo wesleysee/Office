@@ -21,7 +21,7 @@ class TimeRecordsController < ApplicationController
     @time_record.init
     last_time_record = TimeRecord.find_by_employee_id(@employee.id)
     @time_record.date = last_time_record.date + 1.day
-    @time_record.date = @time_record.date + 1.day if @time_record.date.sunday?
+    @time_record.date = @time_record.date + 1.day if @time_record.date.sunday? and not Date.today.monday?
 
     respond_to do |format|
       format.html # new.html.erb
@@ -89,7 +89,8 @@ class TimeRecordsController < ApplicationController
   def bulk_add
     @errors = []
     @errors_count = 0
-    @time_records = Employee.salaried_employees.map do |employee|
+    employees = Employee.where("salaried = ? and include_saturday_salary = ?", true, true)
+    @time_records = employees.map do |employee|
       time_record = employee.time_records.build
       time_record.init
       time_record

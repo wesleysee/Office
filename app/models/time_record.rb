@@ -91,7 +91,7 @@ class TimeRecord < ActiveRecord::Base
     self.am_start = default_date + 8.hour + 30.minute if self.am_start.nil?
     self.am_end = default_date + 12.hour + 0.minute if self.am_end.nil?
     self.pm_start = default_date + 12.hour + 30.minute if self.pm_start.nil?
-    self.pm_end = default_date + 18.hour + 0.minute if self.pm_end.nil?
+    self.pm_end = default_date + 18.hour + 30.minute if self.pm_end.nil?
     self.salary = self.employee.salary unless not self.salary.nil? or self.employee.nil?
     self.date = Date.today.monday? ? Date.today - 2.days : Date.today - 1.day if self.date.nil?
     self.deductions = 0 if self.deductions.nil?

@@ -1,0 +1,4 @@
+$('#headers').html('<%= escape_javascript(render("headers")) %>');
+$('#ta_record_infos').hide();
+$('#ta_record_infos').html('<%= escape_javascript render(@ta_record_infos) %>').fadeIn(500);
+$('#paginator').html('<%= escape_javascript page_entries_info @ta_record_infos %><%= escape_javascript(paginate(@ta_record_infos, :remote => true).to_s) %>');

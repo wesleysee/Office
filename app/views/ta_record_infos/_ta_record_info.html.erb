@@ -1,0 +1,7 @@
+<%= hidden_field_tag :direction, params[:direction] %>
+<%= hidden_field_tag :sort, params[:sort] %>
+<tr>
+  <td><%= ta_record_info.employee.nil? ? "" : ta_record_info.employee.name %></td>
+  <td><%= ta_record_info.Date_Time %></td>
+  <td><%= ta_record_info.imported %></td>
+</tr>
