@@ -9,4 +9,8 @@ class Deduction < ActiveRecord::Base
   validates :week, presence: true
   validates :deduction_year, presence: true
   validates :deduction_month, presence: true
+
+  def deduction_month_str
+    self.deduction_month.to_s + "/" + self.deduction_year.to_s
+  end
 end
