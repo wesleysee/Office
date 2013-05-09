@@ -251,7 +251,7 @@ ORDER BY t.name ASC')
       end
     end
 
-    p.serialize(path + start_date.to_s + '_' + end_date.to_s + '_2.xlsx')
+    p.serialize(path + start_date.to_s + '_' + end_date.to_s + '.xlsx')
   end
 
   def date_to_time(date)
