@@ -108,14 +108,19 @@ ORDER BY t.name ASC')
           sheet.add_row [ "", "IN", "OUT", "IN", "OUT", "", "", "", ""], :style => bordered_centered_header, :height => 15
           sheet.merge_cells("A12:A14")
           sheet.merge_cells("B12:E12")
-          sheet.merge_cells("F12:G12")
           sheet.merge_cells("H12:I14")
           sheet.merge_cells("B13:C13")
           sheet.merge_cells("D13:E13")
-          sheet.merge_cells("F13:F14")
-          sheet.merge_cells("G13:G14")
 
-          reg_service = [ "Reg. Service" ]
+          if employee.overtime_multiplier != 1
+            sheet.merge_cells("F12:G12")
+            sheet.merge_cells("F13:F14")
+            sheet.merge_cells("G13:G14")
+          else
+            sheet.merge_cells("F12:G14")
+          end
+
+          reg_service = [ employee.overtime_multiplier != 1 ? "Reg. Service" : "Wage" ]
           ot_service = [ "O.T. Service" ]
           allowance = [ "Allowance" ]
           holiday = [ "Add. Holiday Pay" ]
@@ -124,10 +129,11 @@ ORDER BY t.name ASC')
 
           c = "B"
           (1..6).each do |i|
-            time_record = employee.time_records.where("date = ?", start_date + (i-1).days).first
+            this_date = start_date + (i-1).days
+            time_record = employee.time_records.where("date = ?", this_date).first
             am_start, am_end, pm_start, pm_end = nil
 
-            if time_record.nil? or not employee.salaried
+            if not employee.salaried
               reg_service.push ""
               ot_service.push ""
               allowance.push ""
@@ -136,7 +142,9 @@ ORDER BY t.name ASC')
               net_amount.push ""
             end
 
+            time_placeholder = ""
             if not time_record.nil?
+              time_placeholder = "-"
               am_start = date_to_time time_record.am_start
               am_end = date_to_time time_record.am_end
               pm_start = date_to_time time_record.pm_start
@@ -144,30 +152,64 @@ ORDER BY t.name ASC')
 
               if employee.salaried
                 reg_service.push time_record.regular_service_pay
-                ot_service.push (employee.overtime_multiplier != 1 ? time_record.overtime_pay : "-")
                 allowance.push time_record.allowance_pay
                 holiday.push time_record.holiday_pay > 0 ? time_record.holiday_pay : ""
-                total_wage.push "=SUM(#{c}25:#{c}27)"
-                net_amount.push "=SUM(#{c}28:#{c}29)"
+                if employee.overtime_multiplier != 1
+                  ot_service.push time_record.overtime_pay
+                  total_wage.push "=SUM(#{c}25:#{c}27)"
+                  net_amount.push "=SUM(#{c}28:#{c}29)"
+                else
+                  ot_service.push "-"
+                  total_wage.push "=SUM(#{c}25:#{c}26)"
+                  net_amount.push "=SUM(#{c}27:#{c}28)"
+                end
               end
+            elsif this_date < Date.today
+              time_placeholder = "-"
+
+              am_start = "-"
+              am_end = "-"
+              pm_start = "-"
+              pm_end = "-"
+
+              if employee.salaried
+                reg_service.push "-"
+                ot_service.push "-"
+                allowance.push "-"
+                holiday.push ""
+                total_wage.push "-"
+                net_amount.push "-"
+              end
+            else
+              reg_service.push ""
+              ot_service.push ""
+              allowance.push ""
+              holiday.push ""
+              total_wage.push ""
+              net_amount.push ""
             end
 
             c = c.succ
 
             j = i + 14
+            time_formula = "IF(B#{j}<>\"-\",C#{j}-B#{j},0)+IF(D#{j}<>\"-\",E#{j}-D#{j},0)"
             if employee.overtime_multiplier == 1
-              reg_time_formula = "=IF(C#{j}-B#{j}+E#{j}-D#{j} = TIME(0,0,0), \"-\"," +
-                  "C#{j}-B#{j}+E#{j}-D#{j})"
+              reg_time_formula = "=IF(#{time_formula} = TIME(0,0,0), \"" + time_placeholder + "\"," +
+                  "#{time_formula})"
               overtime_formula = "-"
             else
-              reg_time_formula = "=IF(C#{j}-B#{j}+E#{j}-D#{j} = TIME(0,0,0), \"-\"," +
-                      "IF(C#{j}-B#{j}+E#{j}-D#{j}>TIME(#{employee.working_hours},0,0),TIME(#{employee.working_hours},0,0),C#{j}-B#{j}+E#{j}-D#{j}))"
-              overtime_formula = "=IF(C#{j}-B#{j}+E#{j}-D#{j}>TIME(#{employee.working_hours},0,0),C#{j}-B#{j}+E#{j}-D#{j} - TIME(#{employee.working_hours},0,0),\"-\")"
+              reg_time_formula = "=IF(#{time_formula} = TIME(0,0,0), \"" + time_placeholder + "\"," +
+                      "IF(#{time_formula}>TIME(#{employee.working_hours},0,0),TIME(#{employee.working_hours},0,0),#{time_formula}))"
+              overtime_formula = "=IF(#{time_formula}>TIME(#{employee.working_hours},0,0),#{time_formula} - TIME(#{employee.working_hours},0,0),\"" + time_placeholder + "\")"
             end
             sheet.add_row [Date::DAYNAMES[i], am_start, am_end, pm_start, pm_end, reg_time_formula, overtime_formula, "", ""], :style => bordered, :height => 20
             sheet["B#{j}:E#{j}"].each { |c| c.style = time_style }
             sheet["F#{j}:G#{j}"].each { |c| c.style = hour_style }
             sheet.merge_cells("H#{j}:I#{j}")
+
+            if employee.overtime_multiplier == 1
+              sheet.merge_cells("F#{j}:G#{j}")
+            end
           end
 
           3.times { sheet.add_row [] }
@@ -178,11 +220,19 @@ ORDER BY t.name ASC')
 
           if employee.salaried
             reg_service.push "=SUM(B25:G25)"
-            ot_service.push (employee.overtime_multiplier != 1 ? "=SUM(B26:G26)" : "-")
-            allowance.push "=SUM(B27:G27)"
-            holiday.push "=IF(SUM(B29:G29) = 0, \"\", SUM(B29:G29))"
-            total_wage.push "=SUM(B28:G28)"
-            net_amount.push "=SUM(H28:H34)"
+            if employee.overtime_multiplier != 1
+              holiday.push "=IF(SUM(B29:G29) = 0, \"\", SUM(B29:G29))"
+              allowance.push "=SUM(B27:G27)"
+              ot_service.push "=SUM(B26:G26)"
+              total_wage.push "=SUM(B28:G28)"
+              net_amount.push "=SUM(H28:H34)"
+            else
+              holiday.push "=IF(SUM(B28:G28) = 0, \"\", SUM(B28:G28))"
+              allowance.push "=SUM(B26:G26)"
+              ot_service.push "-"
+              total_wage.push "=SUM(B27:G27)"
+              net_amount.push "=SUM(H27:H29)"
+            end
 
             reg_service.push ""
             ot_service.push ""
@@ -222,23 +272,42 @@ ORDER BY t.name ASC')
             end
           end
 
+          adj = 5
+
           sheet.add_row reg_service, :style => bordered, :height => 20
-          sheet.add_row ot_service, :style => bordered, :height => 20
+
+          if employee.overtime_multiplier != 1
+            sheet.add_row ot_service, :style => bordered, :height => 20
+          end
+
           sheet.add_row allowance, :style => bordered, :height => 20
           sheet.add_row total_wage, :style => bordered, :height => 20
           sheet.add_row holiday, :style => bordered, :height => 20
           sheet.add_row [ "less: SSS/Philhealth", "", "", "", "", "", sss.first, sss.last, "" ], :style => bordered, :height => 20
-          sheet.add_row [ "=\"        witholding tax\"", "", "", "", "", "", "", "", "" ], :style => bordered, :height => 20
-          sheet.add_row [ "=\"        Pag-ibig\"", "", "", "", "", "", pagibig.first, pagibig.last, "" ], :style => bordered, :height => 20
-          sheet.add_row [ "=\"        Salary Loan\"", "", "", "", "", "", salary_loan.first, salary_loan.last, "" ], :style => bordered, :height => 20
-          sheet.add_row [ "=\"        Pag-ibig Loan\"", "", "", "", "", "", pagibig_loan.first, pagibig_loan.last, "" ], :style => bordered, :height => 20
-          sheet.add_row net_amount, :style => bordered, :height => 20
-          sheet.rows[27].cells[0].b = true
-          sheet.rows[34].cells[0].b = true
-          sheet["B25:I35"].each { |c| c.style = amount_style }
-          sheet["G30:G34"].each { |c| c.style = deduction_style }
 
-          (25..35).each do |i|
+          if employee.overtime_multiplier != 1
+            sheet.add_row [ "=\"        witholding tax\"", "", "", "", "", "", "", "", "" ], :style => bordered, :height => 20
+            sheet.add_row [ "=\"        Pag-ibig\"", "", "", "", "", "", pagibig.first, pagibig.last, "" ], :style => bordered, :height => 20
+            sheet.add_row [ "=\"        Salary Loan\"", "", "", "", "", "", salary_loan.first, salary_loan.last, "" ], :style => bordered, :height => 20
+            sheet.add_row [ "=\"        Pag-ibig Loan\"", "", "", "", "", "", pagibig_loan.first, pagibig_loan.last, "" ], :style => bordered, :height => 20
+            adj = 0
+          end
+
+          sheet.add_row net_amount, :style => bordered, :height => 20
+
+          sheet["B25:I#{35-adj}"].each { |c| c.style = amount_style }
+
+          if employee.overtime_multiplier != 1
+            sheet.rows[27].cells[0].b = true
+            sheet.rows[34].cells[0].b = true
+            sheet["G30:G34"].each { |c| c.style = deduction_style }
+          else
+            sheet.rows[26].cells[0].b = true
+            sheet.rows[29].cells[0].b = true
+            sheet["G29:G29"].each { |c| c.style = deduction_style }
+          end
+
+          (25..(35-adj)).each do |i|
             sheet.merge_cells("H#{i}:I#{i}")
           end
 
