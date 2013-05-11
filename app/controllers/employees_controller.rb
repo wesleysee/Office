@@ -144,10 +144,10 @@ ORDER BY t.name ASC')
 
               if employee.salaried
                 reg_service.push time_record.regular_service_pay
-                ot_service.push time_record.overtime_pay
+                ot_service.push (employee.overtime_multiplier != 1 ? time_record.overtime_pay : "-")
                 allowance.push time_record.allowance_pay
                 holiday.push time_record.holiday_pay > 0 ? time_record.holiday_pay : ""
-                total_wage.push "=#{c}25+#{c}26+#{c}27"
+                total_wage.push (employee.overtime_multiplier != 1 ? "=#{c}25+#{c}26+#{c}27" : "=#{c}25+#{c}27")
                 net_amount.push time_record.holiday_pay > 0 ? "=#{c}28+#{c}29" : "=#{c}28"
               end
             end
@@ -347,7 +347,6 @@ ORDER BY t.name ASC')
     has_saturday = false
     temp_date = Date.today
     @time_records.each do |time_record|
-      puts time_record.date
       temp_date = time_record.date
       if time_record.date.sunday?
         sun_pay = time_record.total_pay
