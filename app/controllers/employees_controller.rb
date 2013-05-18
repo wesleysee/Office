@@ -329,7 +329,7 @@ ORDER BY t.name ASC')
 
         2.times { sheet.add_row [] }
         sheet.add_row ["", "", "", "", "", "", "Amount received by:", "", ""]
-        sheet.merge_cells("G38:I38")
+        sheet.merge_cells("G#{38-adj}:I#{38-adj}")
 
         offset = 0
         sheet = nil
