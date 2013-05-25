@@ -82,8 +82,6 @@ ORDER BY t.name ASC')
         amount_style = s.add_style :format_code => "#,##0.00_);[Red](#,##0.00)", :alignment => {:vertical => :center, :horizontal => :center, :wrap_text => true}, :border => {:color => 'FF000000', :style => :thin, :edges => [:bottom, :left, :right, :top]}
         deduction_style = s.add_style :fg_color => "FF0000", :alignment => {:vertical => :center, :horizontal => :right}, :border => {:color => 'FF000000', :style => :thin, :edges => [:bottom, :left, :right, :top]}
 
-        was_nil = sheet.nil?
-
         sheet = (employee.salaried ? wb.add_worksheet(:name => employee.name, :page_margins => margins) : wb.add_worksheet(:page_margins => margins)) if sheet.nil?
 
         sheet.add_row ["TIME RECORD AND PAYROLL"], :style => header_style
@@ -132,6 +130,7 @@ ORDER BY t.name ASC')
         net_amount = ["Net Amt Due"]
 
         c = "B"
+        has_saturday = false
         (1..6).each do |i|
           this_date = start_date + (i-1).days
           time_record = employee.time_records.where("date = ?", this_date).first
@@ -148,6 +147,7 @@ ORDER BY t.name ASC')
 
           time_placeholder = ""
           if not time_record.nil?
+            has_saturday = true if i == 6
             time_placeholder = "-"
             am_start = date_to_time time_record.am_start
             am_end = date_to_time time_record.am_end
@@ -234,7 +234,7 @@ ORDER BY t.name ASC')
         sheet.merge_cells("H24:I24")
         sheet["B24:G24"].each { |c| c.style = small }
 
-        if employee.salaried
+        if employee.salaried and (has_saturday or Date.today > end_date)
           reg_service.push "=SUM(B25:G25)"
           if employee.overtime_multiplier != 1
             holiday.push "=IF(SUM(B29:G29) = 0, \"\", SUM(B29:G29))"
