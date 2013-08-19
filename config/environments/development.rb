@@ -38,4 +38,6 @@ Office::Application.configure do
   #config.log_level = :warn
 
   config.time_records_folder_location = 'C:/Users/Spencer/Dropbox/Time Records/'
+
+  config.action_mailer.delivery_method = :ses
 end

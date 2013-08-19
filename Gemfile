@@ -54,3 +54,5 @@ gem 'capybara'
 gem 'nested_form'
 
 gem 'axlsx', '~> 1.3.5'
+
+gem 'aws-ses', '~> 0.5.0', require: 'aws/ses'

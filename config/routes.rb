@@ -16,6 +16,11 @@ Office::Application.routes.draw do
   match "/employees/:employee_id/time_records/calculator" => "time_records#calculator"
   match "/employees/:employee_id/time_records/:id/calculator" => "time_records#calculator"
 
+  resources :rsvps
+
+  match "/contact_us" => "rsvps#contact_us"
+  match "/wedding_rsvp" => "rsvps#rsvp"
+
   resources :employees do
     resources :time_records
     resources :deductions
