@@ -16,3 +16,4 @@
 
 #Ignore idea directory
 /.idea
+/Gemfile.lock

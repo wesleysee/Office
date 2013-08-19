@@ -3,20 +3,28 @@ class RsvpsController < ApplicationController
   http_basic_authenticate_with :name => "admin", :password => "02022011", :except => [:contact_us, :rsvp]
 
   def contact_us
-    puts params
-    message =  "From: #{params['name']} <#{params['email']}><br/>\n"
+    message =  "From: #{params['name']} &lt;#{params['email']}&gt;<br/><br/>\n"
     message +=  "Message:<br/>\n#{params['message']}"
-    puts message
-    WeddingMailer.contact_us("wesleysee@gmail.com", params['subject'], message).deliver
+
+    send_email(params['subject'], message)
 
     render :text => "success"
   end
+
 
   def rsvp
     @rsvp = Rsvp.new(params[:rsvp])
     @rsvp.attending = params["attending"]
 
+    message = "Name: #{@rsvp.first_name} #{@rsvp.last_name}<br/>\n"
+    message += "Email: #{@rsvp.email}<br/>\n"
+    message += "Phone: #{@rsvp.phone}<br/>\n"
+    message += "Guests: #{@rsvp.guests}<br/>\n"
+    message += "Notes: #{@rsvp.notes}<br/>\n"
+    message += "Questions: #{@rsvp.questions}<br/>\n"
+
     if @rsvp.save
+      send_email("RSVP: #{@rsvp.first_name} #{@rsvp.last_name} has responded #{@rsvp.attending ? 'Yes' : 'No'}", message)
       render :text => "success"
     else
       render :text => "failure"
@@ -104,4 +112,16 @@ class RsvpsController < ApplicationController
     end
   end
 
+  private
+  def send_email(subject, message)
+    ses = AWS::SimpleEmailService.new(
+        :access_key_id => 'AKIAI66WTUU6RM5VW22A',
+        :secret_access_key => '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')
+
+    ses.send_email(
+        :subject => subject,
+        :from => 'wesleysee@gmail.com',
+        :to => 'wesleysee@gmail.com',
+        :body_html => message)
+  end
 end
