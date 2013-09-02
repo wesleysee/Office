@@ -52,8 +52,8 @@ class TimeRecord < ActiveRecord::Base
     end
     self.holiday_pay = holiday_multiplier * (self.regular_service_pay + self.overtime_pay * employee.overtime_multiplier)
     self.adjusted_holiday_pay = holiday_multiplier * self.regular_service_pay
-    self.holiday_pay = self.salary if self.adjusted_holiday_pay <= self.salary and holiday_multiplier == 1
-    self.adjusted_holiday_pay = self.salary if self.adjusted_holiday_pay <= self.salary and holiday_multiplier == 1
+    self.holiday_pay = self.salary if self.adjusted_holiday_pay < self.salary and holiday_multiplier == 1
+    self.adjusted_holiday_pay = self.salary if self.adjusted_holiday_pay < self.salary and holiday_multiplier == 1
     self.regular_service_pay *= 1.5 if self.date.sunday?
     self.overtime_pay = self.date.sunday? ? self.overtime_pay * 1.5 : self.overtime_pay * employee.overtime_multiplier
     if self.employee.overtime_multiplier == 1
