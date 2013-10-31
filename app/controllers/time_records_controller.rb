@@ -20,7 +20,7 @@ class TimeRecordsController < ApplicationController
     @time_record = @employee.time_records.build
     @time_record.init
     last_time_record = TimeRecord.find_by_employee_id(@employee.id)
-    @time_record.date = last_time_record.nil? ? (Date.now - 1.day) : (last_time_record.date + 1.day)
+    @time_record.date = last_time_record.nil? ? (Date.today - 1.day) : (last_time_record.date + 1.day)
     @time_record.date = @time_record.date + 1.day if @time_record.date.sunday? and not Date.today.monday?
 
     respond_to do |format|
