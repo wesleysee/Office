@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Daily Report (<%= @date %>)<%= " (H)" if not Holiday.find_by_date(@date).nil? %></h1>
+
+<table class="table">
+  <tr>
+    <th>Employee</th>
+    <th>AM Start</th>
+    <th>AM End</th>
+    <th>PM Start</th>
+    <th>PM End</th>
+    <th>Regular Hours</th>
+    <th>Overtime Hours</th>
+    <th>Regular Pay</th>
+    <th>Overtime Pay</th>
+    <th>Allowance</th>
+    <th>Total Pay</th>
+    <th>Deductions</th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  <% @time_records.each do |time_record| %>
+    <tr <%= "class=""error""" if time_record.incomplete? %>>
+      <td><%= time_record.employee.name %></td>
+      <td><%= time_record.am_start_str %></td>
+      <td><%= time_record.am_end_str %></td>
+      <td><%= time_record.pm_start_str %></td>
+      <td><%= time_record.pm_end_str %></td>
+      <td><%= time_record.regular_time %></td>
+      <td><%= time_record.overtime %></td>
+      <td><%= time_record.regular_service_pay %></td>
+      <td><%= time_record.overtime_pay %></td>
+      <td><%= time_record.allowance_pay %></td>
+      <td><%= time_record.total_pay %><%= " (#{time_record.holiday_pay})" if time_record.holiday_pay > 0 %></td>
+      <td><%= time_record.deductions %></td>
+      <td><%= link_to '<i class="icon-pencil"></i>'.html_safe, edit_employee_time_record_path(time_record.employee, time_record) unless time_record.id.nil? %></td>
+      <td><%= link_to '<i class="icon-remove"></i>'.html_safe, employee_time_record_path(time_record.employee, time_record), confirm: 'Are you sure?', method: :delete unless time_record.id.nil? %></td>
+    </tr>
+  <% end %>
+</table>
+
+</table>
+
+<%= paginate @pages, :theme => 'twitter-bootstrap' %>
+
+<br />
+
+<%= link_to 'Back', employees_path %>

@@ -2,6 +2,67 @@ require 'axlsx'
 
 class EmployeesController < ApplicationController
 
+  # GET /employees/show_daily_report
+  def show_daily_report
+    employees = Employee.active_employees.order("id asc")
+    days_before = (params[:page].nil? ? 1 : params[:page]).to_i
+    @date = Date.today - days_before.day
+    min_date = TimeRecord.minimum(:date)
+    min_date = Date.today if min_date.nil?
+    num_of_pages = (@date - min_date).to_i
+    @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
+
+    @time_records = []
+    employees.each do |employee|
+      time_record = employee.time_records.where("date = ?", @date).first
+      if time_record.nil?
+        time_record = TimeRecord.new
+        time_record.date = @date
+        time_record.employee = employee
+        time_record.calculate_hours
+        time_record.calculate_pay
+      end
+      @time_records.push time_record
+    end
+
+    respond_to do |format|
+      format.html # show_daily_report.html.erb
+    end
+  end
+
+  # GET /employees/show_weekly_report
+  def show_weekly_report
+    weeks_before = (params[:page].nil? ? 1 : params[:page]).to_i - 1
+    this_week_end = Date.today.monday? ? Date.today - 1.day : Date.today.end_of_week
+    @end_date = this_week_end - (weeks_before.weeks)
+    @start_date = @end_date - 6.days
+
+    min_date = TimeRecord.minimum(:date)
+    min_date = Date.today if min_date.nil?
+    num_of_pages = ((this_week_end - min_date).to_i)/7 + 1
+    @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
+
+    @records = ActiveRecord::Base.connection.select_all('SELECT id, name, SUM(hours_estimate) AS days, SUM(regular_pay) AS regular_pay, SUM(allowance_pay) AS allowance_pay, SUM(regular_pay + allowance_pay) AS total_pay
+FROM
+(SELECT e.id, e.name, t.date, t.regular_time_in_seconds / 3600 AS hours,
+CASE WHEN t.regular_time_in_seconds/(3600) >= 6 THEN 1
+WHEN t.regular_time_in_seconds/(3600) = 0 THEN 0
+ELSE 0.5 END AS hours_estimate,
+t.regular_service_pay +
+CASE WHEN e.include_saturday_salary = 1 THEN t.adjusted_holiday_pay ELSE t.overtime_pay + t.holiday_pay END AS regular_pay,
+t.allowance_pay AS allowance_pay
+FROM employees e
+INNER JOIN time_records t ON e.id = t.employee_id
+LEFT OUTER JOIN holidays h ON h.date = t.date
+WHERE t.date >= \'' + @start_date.to_s + '\' AND t.date <= \'' + @end_date.to_s + '\' AND (DAYOFWEEK(t.date) != 1 OR h.id IS NOT NULL) AND e.salaried = 0 and e.status = \'active\')
+t GROUP BY t.name
+ORDER BY t.name ASC')
+
+    respond_to do |format|
+      format.html # show_monthly_report.html.erb
+    end
+  end
+
   # GET /employees/show_monthly_report
   def show_monthly_report
     months_before = (params[:page].nil? ? 1 : params[:page]).to_i - 1
@@ -14,7 +75,7 @@ class EmployeesController < ApplicationController
     num_of_pages = ((this_month_end - min_date).to_i)/30 + 1
     @pages = Kaminari.paginate_array((1..num_of_pages).to_a).page(params[:page]).per(1)
 
-    @records = ActiveRecord::Base.connection.select_all('SELECT id, name, SUM(hours_estimate) AS hours, SUM(regular_pay) AS regular_pay, SUM(allowance_pay) AS allowance_pay, SUM(regular_pay + allowance_pay) AS total_pay
+    @records = ActiveRecord::Base.connection.select_all('SELECT id, name, SUM(hours_estimate) AS days, SUM(regular_pay) AS regular_pay, SUM(allowance_pay) AS allowance_pay, SUM(regular_pay + allowance_pay) AS total_pay
 FROM
 (SELECT e.id, e.name, t.date, t.regular_time_in_seconds / 3600 AS hours,
 CASE WHEN t.regular_time_in_seconds/(3600) >= 6 THEN 1
@@ -371,13 +432,13 @@ ORDER BY t.name ASC')
           time_record.deductions = 0
         end
         new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes)
-        if new_time.hour < 11 and time_record.am_start.nil? then
+        if new_time.hour <= 11 and time_record.am_start.nil? then
           time_record.am_start = new_time
-        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.am_end.nil? and not time_record.am_start.nil? then
+        elsif new_time.hour >= 11 and new_time.hour <= 13 and time_record.am_end.nil? and not time_record.am_start.nil? then
           time_record.am_end = new_time
-        elsif new_time.hour >= 11 and new_time.hour <= 15 and time_record.pm_start.nil? then
+        elsif new_time.hour >= 11 and new_time.hour <= 14 and time_record.pm_start.nil? then
           time_record.pm_start = new_time if time_record.am_end.nil? or time_record.am_end + 5.minutes < new_time
-        elsif time_record.pm_end.nil? then
+        elsif time_record.pm_end.nil? and not time_record.pm_start.nil? then
           time_record.pm_end = new_time
         end
         employee_record.imported = true
@@ -395,7 +456,7 @@ ORDER BY t.name ASC')
 # GET /employees
 # GET /employees.json
   def index
-    @employees = Employee.all
+    @employees = Employee.active_employees.order("id asc")
 
     respond_to do |format|
       format.html # index.html.erb
@@ -528,5 +589,6 @@ ORDER BY t.name ASC')
   def replace_cell(worksheet, row, column, value)
     worksheet[row, column] = value
   end
+
 
 end

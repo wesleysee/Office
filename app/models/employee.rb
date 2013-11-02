@@ -21,4 +21,8 @@ class Employee < ActiveRecord::Base
     where("salaried = true")
   end
 
+  def self.active_employees
+    where(:status => "active")
+  end
+
 end
