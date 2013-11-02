@@ -418,7 +418,7 @@ ORDER BY t.name ASC')
       time_record = nil
       employee_records.each do |employee_record|
         record_date = employee_record.Date_Time.to_date
-        next if record_date >= Date.today and Time.new.hour < 18
+        next if record_date >= Date.today and Time.new.hour < 17
         if time_record.nil? then
           time_record = employee.time_records.where(:date => record_date).first
         elsif time_record.date != record_date then
