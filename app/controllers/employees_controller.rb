@@ -5,7 +5,7 @@ class EmployeesController < ApplicationController
   # GET /employees/show_daily_report
   def show_daily_report
     employees = Employee.active_employees.order("id asc")
-    days_before = (params[:page].nil? ? 1 : params[:page]).to_i
+    days_before = (params[:page].nil? ? 1 : params[:page]).to_i - 1
     @date = Date.today - days_before.day
     min_date = TimeRecord.minimum(:date)
     min_date = Date.today if min_date.nil?
@@ -438,7 +438,7 @@ ORDER BY t.name ASC')
           time_record.am_end = new_time
         elsif new_time.hour >= 11 and new_time.hour <= 14 and time_record.pm_start.nil? then
           time_record.pm_start = new_time if time_record.am_end.nil? or time_record.am_end + 5.minutes < new_time
-        elsif time_record.pm_end.nil? and not time_record.pm_start.nil? then
+        elsif time_record.pm_end.nil? and not (time_record.pm_start.nil? and time_record.am_start.nil?) then
           time_record.pm_end = new_time
         end
         employee_record.imported = true
@@ -509,7 +509,7 @@ ORDER BY t.name ASC')
       @weekly_holiday_pay += time_record.holiday_pay
       if time_record.date.saturday?
         has_saturday = true
-        @sat_net_pay = time_record.total_pay - time_record.salary if @employee.include_saturday_salary
+        @sat_net_pay = time_record.total_pay + time_record.holiday_pay - time_record.salary if @employee.include_saturday_salary
       end
     end
 
