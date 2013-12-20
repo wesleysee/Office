@@ -404,7 +404,7 @@ ORDER BY t.name ASC')
     if not date.nil? then
       date.strftime "%l:%M %p"
     else
-      ""
+      "-"
     end
   end
 
