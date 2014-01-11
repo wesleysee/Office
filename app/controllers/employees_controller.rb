@@ -431,7 +431,7 @@ ORDER BY t.name ASC')
           time_record.date = record_date
           time_record.deductions = 0
         end
-        new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes)
+        new_time = Time.parse(employee_record.Date_Time + ' UTC').round(5.minutes).change(year: 2000, month: 1, day: 1)
         if new_time.hour <= 11 and time_record.am_start.nil? then
           time_record.am_start = new_time
         elsif new_time.hour >= 11 and new_time.hour <= 13 and time_record.am_end.nil? and not time_record.am_start.nil? then
