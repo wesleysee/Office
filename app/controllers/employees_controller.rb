@@ -438,7 +438,7 @@ ORDER BY t.name ASC')
           time_record.am_end = new_time
         elsif new_time.hour >= 11 and new_time.hour <= 14 and time_record.pm_start.nil? then
           time_record.pm_start = new_time if time_record.am_end.nil? or time_record.am_end + 5.minutes < new_time
-        elsif time_record.pm_end.nil? and not time_record.pm_start.nil? and time_record.pm_start < new_time then
+        elsif time_record.pm_end.nil? and (new_time.hour > 14 or (not time_record.pm_start.nil? and time_record.pm_start < new_time)) then
           time_record.pm_end = new_time
         end
         employee_record.imported = true
