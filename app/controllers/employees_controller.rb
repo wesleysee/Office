@@ -456,11 +456,16 @@ ORDER BY t.name ASC')
 # GET /employees
 # GET /employees.json
   def index
-    @employees = Employee.active_employees.order("id asc")
+    if params[:term].nil?
+      @employees = Employee.active_employees.order("id asc")
+    else
+      @employees = Employee.order(:name).where("name like ?", "%#{params[:term]}%")
+    end
+    #render json: @employees.map(&:name)
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @employees }
+      format.json { render json: @employees.map(&:name) }
     end
   end
 
@@ -528,7 +533,7 @@ ORDER BY t.name ASC')
 # GET /employees/new.json
   def new
     @employee = Employee.new
-    @employee.salary = 426
+    @employee.salary = 451
 
     respond_to do |format|
       format.html # new.html.erb

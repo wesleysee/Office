@@ -4,4 +4,6 @@
   <td><%= ta_record_info.employee.nil? ? "" : ta_record_info.employee.name %></td>
   <td><%= ta_record_info.Date_Time %></td>
   <td><%= ta_record_info.imported %></td>
+  <td><%= link_to '<i class="icon-pencil"></i>'.html_safe, edit_ta_record_info_path(ta_record_info) %></td>
+  <td><%= link_to '<i class="icon-remove"></i>'.html_safe, ta_record_info, confirm: 'Are you sure?', method: :delete %></td>
 </tr>

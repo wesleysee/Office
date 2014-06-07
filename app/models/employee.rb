@@ -12,9 +12,9 @@ class Employee < ActiveRecord::Base
   validates_numericality_of :salary, :greater_than_or_equal_to => 0.01
 
   def init
-    self.allowance ||= 20
-    self.working_hours ||= 8
-    self.overtime_multiplier ||= 1.25
+    self.allowance ||= 20 if self.has_attribute? :allowance
+    self.working_hours ||= 8 if self.has_attribute? :working_hours
+    self.overtime_multiplier ||= 1.25 if self.has_attribute? :overtime_multiplier
   end
 
   def self.salaried_employees

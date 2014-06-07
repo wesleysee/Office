@@ -1,0 +1,50 @@
+<%= form_for(@ta_record_info, :html => { :class => 'form-horizontal' }) do |f| %>
+  <% if @ta_record_info.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ta_record_info.errors.count, "error") %> prohibited this Time Record from being saved:</h2>
+
+      <ul>
+      <% @ta_record_info.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="control-group">
+    <%= f.label :employee, :class => "control-label" %>
+    <% if @ta_record_info.employee.nil? %>
+      <div class="controls">
+        <%= f.text_field :employee_name, data: {autocomplete_source: employees_path} %>
+      </div>
+    <% else %>
+      <div class="controls" style="margin-top: 5px">
+        <%= @ta_record_info.employee.name %>
+      </div>
+    <% end %>
+  </div>
+  <div class="control-group">
+    <%= f.label :date, "Date", :class => "control-label" %>
+    <div class="controls">
+      <%= date_select :ta_record_info, :date %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :time, "Time", :class => "control-label" %>
+    <div class="controls">
+      <%= time_text_field :ta_record_info, :time %>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label :imported, :class => "control-label" %>
+    <div class="controls">
+      <%= f.check_box :imported %>
+    </div>
+  </div>
+  <br/>
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit :class => "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
