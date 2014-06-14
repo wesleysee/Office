@@ -1,0 +1,40 @@
+<%= form_for(@holiday, :html => { :class => 'form-horizontal' }) do |f| %>
+  <% if @holiday.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@holiday.errors.count, "error") %> prohibited this holiday from being saved:</h2>
+
+      <ul>
+      <% @holiday.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="control-group">
+    <%= f.label :date, "Date", :class => "control-label" %>
+    <div class="controls">
+      <%= date_select :holiday, :date %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :name, :class => "control-label" %>
+    <div class="controls">
+        <%= f.text_field :name %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :multiplier, "Type", :class => "control-label" %>
+    <div class="controls">
+      <%= f.select :multiplier, options_for_select([["Regular", "1"], ["Special non-working", "0.3"]], @holiday.multiplier) %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <%= f.submit :class => "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130819030123) do
+ActiveRecord::Schema.define(:version => 20140614030823) do
 
   create_table "customer_deliveries", :force => true do |t|
     t.integer  "customer_id"
@@ -75,6 +75,8 @@ ActiveRecord::Schema.define(:version => 20130819030123) do
     t.decimal "multiplier", :precision => 10, :scale => 2
   end
 
+  add_index "holidays", ["date"], :name => "index_holidays_on_date", :unique => true
+
   create_table "rsvps", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
@@ -84,8 +86,8 @@ ActiveRecord::Schema.define(:version => 20130819030123) do
     t.boolean  "attending"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-    t.string   "notes"
-    t.string   "questions"
+    t.text     "notes"
+    t.text     "questions"
   end
 
   create_table "ta_record_infos", :primary_key => "ID", :force => true do |t|

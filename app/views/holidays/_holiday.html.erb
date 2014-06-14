@@ -1,0 +1,10 @@
+<%= hidden_field_tag :direction, params[:direction] %>
+<%= hidden_field_tag :sort, params[:sort] %>
+<tr>
+  <td><%= holiday.date %></td>
+  <td><%= holiday.name %></td>
+  <td><%= holiday.type %></td>
+  <td><%= link_to '<i class="icon-eye-open"></i>'.html_safe, holiday %></td>
+  <td><%= link_to '<i class="icon-pencil"></i>'.html_safe, edit_holiday_path(holiday) %></td>
+  <td><%= link_to '<i class="icon-remove"></i>'.html_safe, holiday, confirm: 'Are you sure?', method: :delete %></td>
+</tr>

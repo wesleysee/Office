@@ -14,6 +14,7 @@ Office::Application.routes.draw do
   resources :customers
   resources :time_records
   resources :ta_record_infos
+  resources :holidays
 
   match "/employees/:employee_id/time_records/calculator" => "time_records#calculator"
   match "/employees/:employee_id/time_records/:id/calculator" => "time_records#calculator"

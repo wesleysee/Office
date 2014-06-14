@@ -1,0 +1,57 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Holidays</h1>
+
+<%= form_tag holidays_path, :method => :get, :remote=>true, :id => "holidays_search" do %>
+
+  <div class="row-fluid">
+    <div class="span4">
+      <div class="input-append">
+        <p>
+          <%= text_field_tag :search, params[:search] %>&#160;&#160;&#160;
+          <%= submit_tag "Search", :name => nil, :class => "btn" %>
+        </p>
+      </div>
+    </div>
+    <div id="paginator" class="span8" style="text-align: right">
+      <%= page_entries_info @holidays %>
+      <%= paginate @holidays, :remote => true %>
+    </div>
+  </div>
+  <br/>
+  <table class="table pretty">
+    <tr id="headers">
+      <%= render 'headers' %>
+    </tr>
+
+    <tbody id="holidays">
+      <%= render @holidays %>
+    </tbody>
+  </table>
+<% end %>
+
+<br />
+
+<%= link_to 'New Holiday', new_holiday_path %> |
+<%= link_to 'Back', employees_path %>
+
+<br/>
+<br/>
+
+<%= form_tag holidays_path, :method => :get, :id => "holidays_retrieve" do %>
+
+  <div class="row-fluid">
+    <div class="span8">
+      <div class="input-append">
+        <p>
+          <%= text_field_tag :retrieve, params[:retrieve_url] %>&#160;&#160;&#160;
+          <%= submit_tag "Retrieve Holidays", :name => nil, :class => "btn" %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+<% end %>
+
+  <br/>
+  <br/>

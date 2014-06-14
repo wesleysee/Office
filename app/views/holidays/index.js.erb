@@ -1,0 +1,4 @@
+$('#headers').html('<%= escape_javascript(render("headers")) %>');
+$('#holidays').hide();
+$('#holidays').html('<%= escape_javascript render(@holidays) %>').fadeIn(500);
+$('#paginator').html('<%= escape_javascript page_entries_info @holidays %><%= escape_javascript(paginate(@holidays, :remote => true).to_s) %>');
