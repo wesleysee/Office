@@ -553,12 +553,22 @@ ORDER BY t.name ASC')
 
     respond_to do |format|
       if @employee.save
+        writeToMDB
+
         format.html { redirect_to @employee, notice: 'Employee was successfully created.' }
         format.json { render json: @employee, status: :created, location: @employee }
       else
         format.html { render action: "new" }
         format.json { render json: @employee.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def writeToMDB
+    path = Rails.application.config.time_records_folder_location
+
+    Dir.chdir("#{path}") do
+      system("java -jar office-mdb-writer.jar")
     end
   end
 
