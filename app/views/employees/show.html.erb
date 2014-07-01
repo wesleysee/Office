@@ -5,6 +5,11 @@
     <h3>Employee Information</h3><br/>
     <table class="table table-condensed">
       <tr>
+        <td>ID</td>
+        <td style="width: 60%"><strong><%= @employee.id %></strong></td>
+      </tr>
+
+      <tr>
         <td>Name</td>
         <td style="width: 60%"><strong><%= @employee.name %></strong></td>
       </tr>
@@ -31,18 +36,9 @@
 
       <tr>
         <td>Salary</td>
-        <td><strong><%= @employee.salary %></strong></td>
+        <td><strong><%= @employee.salary %> (<%= @employee.allowance %>)</strong></td>
       </tr>
 
-      <tr>
-        <td>Overtime Multiplier</td>
-        <td><strong><%= @employee.overtime_multiplier %></strong></td>
-      </tr>
-
-      <tr>
-        <td>Allowance</td>
-        <td><strong><%= @employee.allowance %></strong></td>
-      </tr>
       <tr><td>&nbsp;</td><td></td></tr>
     </table>
   </div>
