@@ -328,7 +328,7 @@ ORDER BY t.name ASC')
           }
         end
 
-        deductions = employee.deductions.where("year = ? and week = ?", Date.today.year, Date.today.cweek)
+        deductions = employee.deductions.where("year = ? and week = ?", start_date.year, start_date.cweek)
 
         sss = ["", ""]
         salary_loan = ["", ""]
