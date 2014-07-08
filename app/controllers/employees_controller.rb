@@ -533,7 +533,7 @@ ORDER BY t.name ASC')
 # GET /employees/new.json
   def new
     @employee = Employee.new
-    @employee.salary = 451
+    @employee.init_kimson
 
     respond_to do |format|
       format.html # new.html.erb

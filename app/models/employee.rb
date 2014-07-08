@@ -17,6 +17,18 @@ class Employee < ActiveRecord::Base
     self.overtime_multiplier ||= 1.25 if self.has_attribute? :overtime_multiplier
   end
 
+  def init_kimson
+    self.company = "Kimson"
+    self.working_hours = 9
+    self.salaried = false
+    self.salary = 250
+    self.overtime_multiplier = 0
+    self.allowance = 0
+    self.include_saturday_salary = false
+    self.generate_time_record = true
+    self.lunch_minutes = 30
+  end
+
   def self.salaried_employees
     where("salaried = true")
   end
