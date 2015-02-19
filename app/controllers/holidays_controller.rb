@@ -17,7 +17,7 @@ class HolidaysController < ApplicationController
   def retrieve_holidays(url)
     doc = Nokogiri::HTML(open(url))
 
-    doc.css('div#main-content div.large-6 div.entry-content p').each do |entry|
+    doc.css('div.entry-content div.row div.large-7 p').each do |entry|
       content_split = entry.content.split(" ")
       if not entry.content.nil? and Date::MONTHNAMES.include? content_split[0]
         index = entry.content.index("–")
