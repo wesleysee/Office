@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140614030823) do
+ActiveRecord::Schema.define(:version => 20181112014859) do
 
   create_table "customer_deliveries", :force => true do |t|
     t.integer  "customer_id"
@@ -67,7 +67,10 @@ ActiveRecord::Schema.define(:version => 20140614030823) do
     t.boolean  "include_saturday_salary"
     t.boolean  "generate_time_record"
     t.integer  "lunch_minutes"
+    t.integer  "fingerprint_id"
   end
+
+  add_index "employees", ["fingerprint_id"], :name => "index_employees_on_fingerprint_id"
 
   create_table "holidays", :force => true do |t|
     t.date    "date"
