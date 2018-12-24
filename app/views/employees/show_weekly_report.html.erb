@@ -2,6 +2,10 @@
 
 <h1>Weekly Report (<%= @start_date %> to <%= @end_date %>)</h1>
 
+<% if @excel_exists %>
+  <%= @excel_file %>
+<% end %>
+
 <table class="table">
   <tr>
     <th>Name</th>

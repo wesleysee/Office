@@ -58,8 +58,14 @@ WHERE t.date >= \'' + @start_date.to_s + '\' AND t.date <= \'' + @end_date.to_s 
 t GROUP BY t.name
 ORDER BY t.name ASC')
 
+    path = Rails.application.config.time_records_folder_location
+    xlsx_end_date = @end_date - 1.days
+
+    @excel_file = path + start_date.to_s + '_' + end_date.to_s + '.xlsx'
+    @excel_exists = File.file?(@excel_file)
+
     respond_to do |format|
-      format.html # show_monthly_report.html.erb
+      format.html # show_weekly_report.html.erb
     end
   end
 
