@@ -3,7 +3,8 @@
 <h1>Weekly Report (<%= @start_date %> to <%= @end_date %>)</h1>
 
 <% if @excel_exists %>
-  <%= @excel_file %>
+  <%= link_to 'Download Excel', downlad_excel_url(:filename => @excel_filename) %>
+  <br />
 <% end %>
 
 <table class="table">

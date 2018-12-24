@@ -61,8 +61,8 @@ ORDER BY t.name ASC')
     path = Rails.application.config.time_records_folder_location
     xlsx_end_date = @end_date - 1.days
 
-    @excel_file = path + @start_date.to_s + '_' + xlsx_end_date.to_s + '.xlsx'
-    @excel_exists = File.file?(@excel_file)
+    @excel_filename = @start_date.to_s + '_' + xlsx_end_date.to_s + '.xlsx'
+    @excel_exists = File.file?(path + @excel_filename)
 
     respond_to do |format|
       format.html # show_weekly_report.html.erb
@@ -101,6 +101,11 @@ ORDER BY t.name ASC')
       format.html # show_monthly_report.html.erb
     end
   end
+
+  # GET /employees/excel/:filename
+  def download_excel
+    path = Rails.application.config.time_records_folder_location
+    send_file(path + params[:filename], type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
   # GET /employees/generate_time_records
   def generate_time_records
