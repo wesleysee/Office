@@ -106,6 +106,7 @@ ORDER BY t.name ASC')
   def download_excel
     path = Rails.application.config.time_records_folder_location
     send_file(path + params[:filename], type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  end
 
   # GET /employees/generate_time_records
   def generate_time_records
