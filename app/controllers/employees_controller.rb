@@ -105,7 +105,7 @@ ORDER BY t.name ASC')
   # GET /employees/excel/:filename
   def download_excel
     path = Rails.application.config.time_records_folder_location
-    send_file(path + params[:filename], type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    send_file(path + params[:filename] + '.' + params[:format], type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   end
 
   # GET /employees/generate_time_records
@@ -616,6 +616,5 @@ ORDER BY t.name ASC')
   def replace_cell(worksheet, row, column, value)
     worksheet[row, column] = value
   end
-
 
 end
