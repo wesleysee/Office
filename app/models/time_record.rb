@@ -107,7 +107,7 @@ class TimeRecord < ActiveRecord::Base
   end
 
   def send_notifications
-    if not employee.salaried:
+    if not employee.salaried
       send_to_bodega_app(
         create_bodega_app_payload(
           self.regular_time_in_seconds.to_f / (employee.working_hours * 60 * 60),

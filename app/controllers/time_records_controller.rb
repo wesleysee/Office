@@ -150,7 +150,7 @@ class TimeRecordsController < ApplicationController
 
   def send_notifications
     @employee = Employee.find(params[:employee_id])
-    @time_record = @employee.time_records.find_by_id(params[:id])
+    @time_record = @employee.time_records.find_by_id(params[:time_record_id])
     @time_record.send_notifications
 
     respond_to do |format|

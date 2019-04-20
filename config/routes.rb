@@ -19,10 +19,11 @@ Office::Application.routes.draw do
 
   match "/employees/:employee_id/time_records/calculator" => "time_records#calculator"
   match "/employees/:employee_id/time_records/:id/calculator" => "time_records#calculator"
-  match "/employees/:employee_id/time_records/:id/send_notifications" => "time_records#send_notifications"
 
   resources :employees do
-    resources :time_records
+    resources :time_records do
+      get 'send_notifications'
+    end
     resources :deductions
   end
 

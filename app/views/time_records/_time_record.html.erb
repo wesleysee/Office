@@ -14,7 +14,7 @@
   <td><%= link_to '<i class="icon-eye-open"></i>'.html_safe, employee_time_record_path(@employee, time_record) %></td>
   <td><%= link_to '<i class="icon-pencil"></i>'.html_safe, edit_employee_time_record_path(@employee, time_record) %></td>
   <td><%= link_to '<i class="icon-remove"></i>'.html_safe, employee_time_record_path(@employee, time_record), confirm: 'Are you sure?', method: :delete %></td>
-  <% @time_record.employee.salaried %>
-    <td><%= link_to '<i class="icon-upload"></i>'.html_safe, time_records_send_notifications_path(@employee, time_record) %></td>
+  <% if not @employee.salaried %>
+    <td><%= link_to '<i class="icon-upload"></i>'.html_safe, employee_time_record_send_notifications_path(@employee, time_record) %></td>
   <% end %>
 </tr>
