@@ -159,7 +159,7 @@ ORDER BY t.name ASC')
 
         sheet.add_row ["TIME RECORD AND PAYROLL"], :style => header_style
         sheet.merge_cells("A#{1 + offset}:I#{1 + offset}")
-        
+
         4.times { sheet.add_row [] }
 
         sheet.add_row ["Name of Employee:", employee.name, "", "", "", "", "Pay Rate:", "", ""]

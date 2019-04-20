@@ -1,3 +1,5 @@
+require 'net/http'
+
 class TimeRecord < ActiveRecord::Base
   belongs_to :employee
 
@@ -9,6 +11,7 @@ class TimeRecord < ActiveRecord::Base
   default_scope order: 'time_records.date DESC'
 
   before_save :do_calculations
+  after_save  :send_notifications
 
   def incomplete?
     self.am_start.nil? or self.am_end.nil? or self.pm_start.nil? or self.pm_end.nil?
@@ -103,6 +106,23 @@ class TimeRecord < ActiveRecord::Base
     self.deductions = 0 if self.deductions.nil?
   end
 
+  def send_notifications
+    if not employee.salaried:
+      send_to_bodega_app(
+        create_bodega_app_payload(
+          self.regular_time_in_seconds.to_f / (employee.working_hours * 60 * 60),
+          'regular'
+        )
+      )
+      send_to_bodega_app(
+        create_bodega_app_payload(
+          self.overtime_in_seconds.to_f / 60.0,
+          'overtime'
+        )
+      )
+    end
+  end
+
   private
 
     def display_time_in_hours(time)
@@ -112,6 +132,27 @@ class TimeRecord < ActiveRecord::Base
     def time_end_is_less_than_time_start
       errors.add(:am_end, "should be later than AM start") if not self.am_start.nil? and not self.am_end.nil? and self.am_start > self.am_end
       errors.add(:pm_end, "should be later than PM start") if not self.pm_start.nil? and not self.pm_end.nil? and self.pm_start > self.pm_end
+    end
+
+    def create_bodega_app_payload(amount, attendance_type):
+      return { :name => employee.name,
+        :attendance => {
+          :amount => amount,
+          :applies_on => self.date.strftime('%F'),
+          :attendance_type => attendance_type
+        }
+      }
+    end
+
+    def send_to_bodega_app(payload):
+      url = 'https://immense-ridge-61534.herokuapp.com/attendances'
+      uri = URI(url)
+      req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+      req.body = payload.to_json
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      http.request(req)
     end
 
 end
