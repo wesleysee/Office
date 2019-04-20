@@ -134,7 +134,7 @@ class TimeRecord < ActiveRecord::Base
       errors.add(:pm_end, "should be later than PM start") if not self.pm_start.nil? and not self.pm_end.nil? and self.pm_start > self.pm_end
     end
 
-    def create_bodega_app_payload(amount, attendance_type):
+    def create_bodega_app_payload(amount, attendance_type)
       return { :name => employee.name,
         :attendance => {
           :amount => amount,
@@ -144,7 +144,7 @@ class TimeRecord < ActiveRecord::Base
       }
     end
 
-    def send_to_bodega_app(payload):
+    def send_to_bodega_app(payload)
       url = 'https://immense-ridge-61534.herokuapp.com/attendances'
       uri = URI(url)
       req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
