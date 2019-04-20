@@ -116,7 +116,7 @@ class TimeRecord < ActiveRecord::Base
       )
       send_to_bodega_app(
         create_bodega_app_payload(
-          self.overtime_in_seconds.to_f / 60.0,
+          self.overtime_in_seconds.to_f / (60 * 60.0),
           'overtime'
         )
       )
@@ -147,7 +147,7 @@ class TimeRecord < ActiveRecord::Base
     def send_to_bodega_app(payload)
       url = 'https://immense-ridge-61534.herokuapp.com/attendances'
       uri = URI(url)
-      req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+      req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
       req.body = payload.to_json
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
